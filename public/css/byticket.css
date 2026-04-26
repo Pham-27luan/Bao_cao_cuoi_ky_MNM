@@ -1,0 +1,389 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f4f8fe 0%, #e9f0f8 100%);
+            min-height: 100vh;
+            padding-top: 82px;
+        }
+        
+        .page-wrapper {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ========= PANEL ĐẶT VÉ CHÍNH ========= */
+        .booking-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .route-info-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 24px 32px;
+            background: linear-gradient(110deg, #0f766e, #0f2b3d);
+            color: #ffffff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .route-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+
+        .route-title i {
+            color: #fbbf24;
+        }
+
+        .route-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 12px 18px;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .route-details strong {
+            color: #ffffff;
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 32px;
+            background: #ffffff;
+            border-bottom: 1px solid #edf2f9;
+            color: #163447;
+            font-weight: 700;
+        }
+
+        .date-input {
+            border: 1px solid #d5e0ec;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            color: #163447;
+            background: #f9fcff;
+            outline: none;
+        }
+
+        .date-input:focus {
+            border-color: #0f766e;
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+        }
+
+        /* Thanh tìm kiếm - đã cập nhật select theo yêu cầu */
+        .search-banner {
+            padding: 28px 32px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            background: #fefefe;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .field-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #5a6e87;
+        }
+
+        .field-group select,
+        .field-group input {
+            background: #f9fcff;
+            border: 1px solid #e2e9f2;
+            border-radius: 1.2rem;
+            padding: 14px 18px;
+            font-family: 'Inter', monospace;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #1a2c3e;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .field-group select:focus,
+        .field-group input:focus {
+            border-color: #ffb347;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 180, 71, 0.2);
+        }
+
+        .btn-primary {
+            background: #dc2f02;
+            border: none;
+            border-radius: 1.4rem;
+            padding: 14px 28px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            min-height: 52px;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background: #b91c00;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(220, 47, 2, 0.25);
+        }
+
+        /* ========= KẾT QUẢ CHUYẾN & GHẾ NGỒI ========= */
+        .result-section {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 24px;
+            padding: 28px 32px;
+        }
+        
+        .trip-detail {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(8px);
+            border-radius: 1.6rem;
+        }
+
+        .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        .trip-time {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #0f2b3d;
+        }
+
+        .station-badge {
+            background: #ecf7f0;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-weight: 700;
+            color: #2c6e2f;
+            font-size: 0.85rem;
+        }
+
+        .route-highlight {
+            background: #fef5e8;
+            border-radius: 1.4rem;
+            padding: 18px 22px;
+            margin: 20px 0 24px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .route-info-stack strong {
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 6px;
+            color: #3c5a7d;
+        }
+
+        .route-info-stack span {
+            font-size: 0.9rem;
+            color: #4b5e77;
+        }
+
+        .select-badge {
+            background: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #ff8c42;
+            border: 1px solid #ffe0b5;
+        }
+
+        /* ghế ngồi sang trọng */
+        .seat-area {
+            background: #ffffff;
+            border-radius: 1.6rem;
+            padding: 6px 0;
+        }
+
+        .seat-area h4 {
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+        
+        .seat {
+            background: #eff6ff;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s linear;
+            border: 1px solid #dce5f0;
+            color: #1f4f8a;
+        }
+        
+        .seat.available:hover {
+            background: #ffe2bd;
+            transform: scale(0.97);
+            border-color: #ffb347;
+        }
+        
+        .seat.selected {
+            background: #f39c12;
+            color: white;
+        }
+
+        .seat.booked {
+            background: #eef2f6;
+            color: #a0afc0;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 12px;
+        }
+        
+        .legend-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .summary-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(10px);
+            border-radius: 1.8rem;
+            border: 1px solid #eef2fc;
+            padding: 26px 24px;
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+        }
+        
+        .summary-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #ffb347;
+            padding-left: 14px;
+            color: #1a2c3e;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(240, 244, 250, 0.8);
+        }
+        
+        .total-price {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #c71d00;
+            margin: 18px 0;
+        }
+        
+        .btn-book-final {
+            width: 100%;
+            background: #0f2b3d;
+            border: none;
+            border-radius: 44px;
+            padding: 16px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .btn-book-final:hover {
+            background: #dc2f02;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 112px;
+            }
+
+            .page-wrapper {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+
+            .route-info-banner,
+            .date-selector {
+                padding: 18px;
+            }
+
+            .route-info-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .route-details {
+                justify-content: flex-start;
+            }
+
+            .date-selector {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .date-input {
+                width: 100%;
+            }
+
+            .result-section {
+                grid-template-columns: 1fr;
+                padding: 18px;
+            }
+        }
