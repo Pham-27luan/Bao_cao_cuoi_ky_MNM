@@ -7,6 +7,7 @@ mkdir -p storage/framework/cache storage/framework/sessions storage/framework/vi
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
+PORT=${PORT:-10000}
 DB_WAIT_ENABLED=${DB_WAIT_ENABLED:-true}
 DB_WAIT_STRICT=${DB_WAIT_STRICT:-false}
 DB_WAIT_TIMEOUT=${DB_WAIT_TIMEOUT:-30}
@@ -40,6 +41,9 @@ wait_for_database() {
     "
 }
 
+sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
+sed -i "s/:80>/:${PORT}>/" /etc/apache2/sites-available/000-default.conf
+
 if [ "$DB_WAIT_ENABLED" = "true" ]; then
     elapsed=0
     while ! wait_for_database; do
@@ -61,8 +65,9 @@ if [ "$DB_WAIT_ENABLED" = "true" ]; then
     done
 fi
 
-if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
-    php artisan key:generate --force
+if [ -z "${APP_KEY}" ]; then
+    echo "APP_KEY is missing. Set APP_KEY in your Render environment variables."
+    exit 1
 fi
 
 php artisan config:clear
@@ -75,4 +80,4 @@ if [ "$RUN_SEEDERS" = "true" ]; then
     php artisan db:seed --force
 fi
 
-exec php-fpm
+exec apache2-foreground
