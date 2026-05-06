@@ -1,5 +1,6 @@
 services:
   db:
+    profiles: ["local-db"]
     image: mysql:8.0
     container_name: laravel_db
     restart: unless-stopped
@@ -32,22 +33,10 @@ services:
       APP_DEBUG: "true"
       APP_URL: http://localhost:8000
       PORT: 10000
-      DB_CONNECTION: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: laravel
-      DB_USERNAME: laravel
-      DB_PASSWORD: secret
-      DB_SSLMODE: prefer
-      DB_WAIT_ENABLED: "true"
-      DB_WAIT_STRICT: "true"
-      RUN_MIGRATIONS: "true"
+      RUN_MIGRATIONS: "false"
       RUN_SEEDERS: "false"
     ports:
       - "8000:10000"
-    depends_on:
-      db:
-        condition: service_healthy
 
 volumes:
   db_data:
