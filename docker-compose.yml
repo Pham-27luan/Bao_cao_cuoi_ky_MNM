@@ -23,24 +23,18 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: laravel_app
+    restart: unless-stopped
     working_dir: /var/www
     env_file:
       - .env
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
+      PORT: 10000
       RUN_MIGRATIONS: "false"
       RUN_SEEDERS: "false"
-
-  webserver:
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
-    container_name: laravel_nginx
     ports:
-      - "8000:80"
-    depends_on:
-      - app
+      - "8000:10000"
 
 volumes:
   db_data:
