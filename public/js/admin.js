@@ -19,6 +19,43 @@ function isTicketsPage() {
     return document.body?.dataset?.page === "admin-tickets";
 }
 
+function getCsrfToken() {
+    return (
+        document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ||
+        document.querySelector('input[name="_token"]')?.value ||
+        ""
+    );
+}
+
+function submitDeleteRequest(url) {
+    const csrfToken = getCsrfToken();
+
+    if (!csrfToken) {
+        window.location.href = url;
+        return;
+    }
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = url;
+    form.style.display = "none";
+
+    const tokenInput = document.createElement("input");
+    tokenInput.type = "hidden";
+    tokenInput.name = "_token";
+    tokenInput.value = csrfToken;
+
+    const methodInput = document.createElement("input");
+    methodInput.type = "hidden";
+    methodInput.name = "_method";
+    methodInput.value = "DELETE";
+
+    form.appendChild(tokenInput);
+    form.appendChild(methodInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+
 // ==========================================
 // 2. Quản lý người dùng
 // ==========================================
@@ -142,7 +179,7 @@ function closeDeleteModal() {
 
 function confirmDeleteUser() {
     if (deleteUserId) {
-        window.location.href = `/admin/users/delete/${deleteUserId}`;
+        submitDeleteRequest(`/admin/users/delete/${deleteUserId}`);
     }
 }
 
@@ -215,7 +252,7 @@ function closeDeleteBusModal() {
 
 function confirmDeleteBus() {
     if (deleteBusId) {
-        window.location.href = `/admin/buses/delete/${deleteBusId}`;
+        submitDeleteRequest(`/admin/buses/delete/${deleteBusId}`);
     }
 }
 
@@ -311,7 +348,7 @@ function closeDeleteRouteModal() {
 
 function confirmDeleteRoute() {
     if (deleteRouteId) {
-        window.location.href = `/admin/routes/delete/${deleteRouteId}`;
+        submitDeleteRequest(`/admin/routes/delete/${deleteRouteId}`);
     }
 }
 
@@ -438,7 +475,7 @@ function closeDeleteTripModal() {
 
 function confirmDeleteTrip() {
     if (deleteTripId) {
-        window.location.href = `/admin/trips/delete/${deleteTripId}`;
+        submitDeleteRequest(`/admin/trips/delete/${deleteTripId}`);
     }
 }
 
@@ -595,7 +632,7 @@ function closeDeleteTicketModal() {
 
 function confirmDeleteTicket() {
     if (deleteTicketId) {
-        window.location.href = `/admin/tickets/delete/${deleteTicketId}`;
+        submitDeleteRequest(`/admin/tickets/delete/${deleteTicketId}`);
     }
 }
 

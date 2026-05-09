@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\TaiKhoan;
-use App\Models\Xe;
-use App\Models\TuyenXe;
 use App\Models\ChuyenXe;
-use App\Models\Ve;
 use App\Models\Ghe;
+use App\Models\TaiKhoan;
+use App\Models\TuyenXe;
+use App\Models\Ve;
+use App\Models\Xe;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
-    // Dashboard
     public function dashboard()
     {
         $totalUsers = TaiKhoan::count();
@@ -38,15 +38,14 @@ class AdminController extends Controller
             ->map(function ($ticket) {
                 $customerName = optional($ticket->taiKhoan)->hoten
                     ?: optional($ticket->taiKhoan)->phone
-                    ?: 'Khách hàng';
+                    ?: 'Khach hang';
 
                 return [
                     'icon' => 'fas fa-ticket-alt',
                     'icon_bg' => 'bg-blue-100',
                     'icon_color' => 'text-blue-600',
-                    'name' => 'Vé mới: #V' . str_pad($ticket->mave, 6, '0', STR_PAD_LEFT)
-                        . ' - ' . $customerName,
-                    'time' => $ticket->ngaydat ? Carbon::parse($ticket->ngaydat)->diffForHumans() : 'Chưa cập nhật',
+                    'name' => 'Ve moi: #V' . str_pad($ticket->mave, 6, '0', STR_PAD_LEFT) . ' - ' . $customerName,
+                    'time' => $ticket->ngaydat ? Carbon::parse($ticket->ngaydat)->diffForHumans() : 'Chua cap nhat',
                     'sort_time' => $ticket->ngaydat ? Carbon::parse($ticket->ngaydat)->timestamp : 0,
                 ];
             });
@@ -59,8 +58,8 @@ class AdminController extends Controller
                     'icon' => 'fas fa-user-plus',
                     'icon_bg' => 'bg-green-100',
                     'icon_color' => 'text-green-600',
-                    'name' => 'Người dùng mới: ' . ($user->hoten ?: $user->phone),
-                    'time' => 'Theo dữ liệu mới nhất',
+                    'name' => 'Nguoi dung moi: ' . ($user->hoten ?: $user->phone),
+                    'time' => 'Theo du lieu moi nhat',
                     'sort_time' => 0,
                 ];
             });
@@ -73,8 +72,8 @@ class AdminController extends Controller
                     'icon' => 'fas fa-route',
                     'icon_bg' => 'bg-yellow-100',
                     'icon_color' => 'text-yellow-600',
-                    'name' => 'Tuyến xe mới: ' . ($route->tentuyen ?: trim($route->diemdi . ' - ' . $route->diemden)),
-                    'time' => 'Theo dữ liệu mới nhất',
+                    'name' => 'Tuyen xe moi: ' . ($route->tentuyen ?: trim($route->diemdi . ' - ' . $route->diemden)),
+                    'time' => 'Theo du lieu moi nhat',
                     'sort_time' => 0,
                 ];
             });
@@ -100,15 +99,9 @@ class AdminController extends Controller
         ));
     }
 
-
-    // ========== QUẢN LÝ NGƯỜI DÙNG ==========
-
-
-    // Hiển thị danh sách người dùng
     public function users()
     {
         try {
-            // Lấy tất cả người dùng, sắp xếp theo ID (asc: tăng dần, desc: giảm dần)
             $users = TaiKhoan::orderBy('id', 'asc')->get();
             return view('admin.users', compact('users'));
         } catch (\Exception $e) {
@@ -118,13 +111,11 @@ class AdminController extends Controller
         }
     }
 
-    // Hiển thị form thêm người dùng
     public function createUser()
     {
         return view('admin.users-create');
     }
 
-    // Lưu người dùng mới
     public function storeUser(Request $request)
     {
         $request->validate([
@@ -134,12 +125,12 @@ class AdminController extends Controller
             'password' => 'required|string|min:6',
             'role' => 'required|in:admin,tai_xe,khach_hang',
         ], [
-            'hoten.required' => 'Vui lòng nhập họ tên',
-            'phone.required' => 'Vui lòng nhập số điện thoại',
-            'phone.unique' => 'Số điện thoại đã tồn tại',
-            'email.unique' => 'Email đã tồn tại',
-            'password.required' => 'Vui lòng nhập mật khẩu',
-            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
+            'hoten.required' => 'Vui long nhap ho ten',
+            'phone.required' => 'Vui long nhap so dien thoai',
+            'phone.unique' => 'So dien thoai da ton tai',
+            'email.unique' => 'Email da ton tai',
+            'password.required' => 'Vui long nhap mat khau',
+            'password.min' => 'Mat khau phai co it nhat 6 ky tu',
         ]);
 
         try {
@@ -151,14 +142,13 @@ class AdminController extends Controller
                 'hoten' => $request->hoten,
             ]);
 
-            return redirect()->route('admin.users')->with('success', 'Thêm người dùng thành công!');
+            return redirect()->route('admin.users')->with('success', 'Them nguoi dung thanh cong!');
         } catch (\Exception $e) {
             Log::error('Store user error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Cập nhật người dùng
     public function updateUser(Request $request, $id)
     {
         $request->validate([
@@ -168,6 +158,7 @@ class AdminController extends Controller
             'password' => 'nullable|string|min:6',
             'role' => 'required|in:admin,tai_xe,khach_hang',
         ]);
+
         try {
             $user = TaiKhoan::findOrFail($id);
             $data = [
@@ -183,42 +174,39 @@ class AdminController extends Controller
 
             $user->update($data);
 
-            return redirect()->route('admin.users')->with('success', 'Cập nhật người dùng thành công!');
+            return redirect()->route('admin.users')->with('success', 'Cap nhat nguoi dung thanh cong!');
         } catch (\Exception $e) {
             Log::error('Update user error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
-    // Xóa người dùng
+
     public function deleteUser($id)
     {
         try {
-            $user = TaiKhoan::findOrFail($id);
-            $user->delete();
+            DB::transaction(function () use ($id) {
+                $user = TaiKhoan::findOrFail($id);
+                Ve::where('mataikhoan', $user->id)->delete();
+                $user->delete();
+            });
 
-            return redirect()->route('admin.users')->with('success', 'Xóa người dùng thành công!');
+            return redirect()->route('admin.users')->with('success', 'Xoa nguoi dung thanh cong!');
         } catch (\Exception $e) {
             Log::error('Delete user error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()]);
+            return redirect()->route('admin.users')->withErrors(['Loi xoa nguoi dung: ' . $e->getMessage()]);
         }
     }
 
-    // Lấy thông tin theo ID
     public function getUser($id)
     {
         try {
             $user = TaiKhoan::findOrFail($id);
             return response()->json($user);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Không tìm thấy người dùng'], 404);
+            return response()->json(['error' => 'Khong tim thay nguoi dung'], 404);
         }
     }
 
-
-    // ========== QUẢN LÝ XE ==========
-
-
-    // Hiển thị danh sách xe
     public function buses()
     {
         try {
@@ -231,7 +219,6 @@ class AdminController extends Controller
         }
     }
 
-    // Thêm xe mới
     public function storeBus(Request $request)
     {
         $request->validate([
@@ -241,12 +228,12 @@ class AdminController extends Controller
             'nhaxe' => 'required|string',
             'trangthai' => 'required|in:Đang hoạt động,Bảo trì,Ngừng hoạt động',
         ], [
-            'biensoxe.required' => 'Vui lòng nhập biển số xe',
-            'biensoxe.unique' => 'Biển số xe đã tồn tại',
-            'loaixe.required' => 'Vui lòng chọn loại xe',
-            'soghe.required' => 'Vui lòng nhập số ghế',
-            'soghe.min' => 'Số ghế phải lớn hơn 0',
-            'nhaxe.required' => 'Vui lòng nhập tên nhà xe',
+            'biensoxe.required' => 'Vui long nhap bien so xe',
+            'biensoxe.unique' => 'Bien so xe da ton tai',
+            'loaixe.required' => 'Vui long chon loai xe',
+            'soghe.required' => 'Vui long nhap so ghe',
+            'soghe.min' => 'So ghe phai lon hon 0',
+            'nhaxe.required' => 'Vui long nhap ten nha xe',
         ]);
 
         try {
@@ -254,28 +241,25 @@ class AdminController extends Controller
 
             if ($this->busPlateExists($bienSoXe)) {
                 return back()
-                    ->withErrors(['biensoxe' => 'Biển số xe "' . $bienSoXe . '" đã tồn tại'])
+                    ->withErrors(['biensoxe' => 'Bien so xe "' . $bienSoXe . '" da ton tai'])
                     ->withInput();
             }
 
-            $data = [
+            Xe::create([
                 'biensoxe' => $bienSoXe,
                 'loaixe' => $request->loaixe,
                 'soghe' => $request->soghe,
                 'nhaxe' => $request->nhaxe,
                 'trangthai' => $request->trangthai,
-            ];
+            ]);
 
-            Xe::create($data);
-
-            return redirect()->route('admin.buses')->with('success', 'Thêm xe thành công!');
+            return redirect()->route('admin.buses')->with('success', 'Them xe thanh cong!');
         } catch (\Exception $e) {
             Log::error('Store bus error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Cập nhật xe
     public function updateBus(Request $request, $id)
     {
         $request->validate([
@@ -292,60 +276,59 @@ class AdminController extends Controller
 
             if ($this->busPlateExists($bienSoXe, $id)) {
                 return back()
-                    ->withErrors(['biensoxe' => 'Biển số xe "' . $bienSoXe . '" đã tồn tại'])
+                    ->withErrors(['biensoxe' => 'Bien so xe "' . $bienSoXe . '" da ton tai'])
                     ->withInput();
             }
 
-            $data = [
+            $bus->update([
                 'biensoxe' => $bienSoXe,
                 'loaixe' => $request->loaixe,
                 'soghe' => $request->soghe,
                 'nhaxe' => $request->nhaxe,
                 'trangthai' => $request->trangthai,
-            ];
+            ]);
 
-            $bus->update($data);
-
-            return redirect()->route('admin.buses')->with('success', 'Cập nhật xe thành công!');
+            return redirect()->route('admin.buses')->with('success', 'Cap nhat xe thanh cong!');
         } catch (\Exception $e) {
             Log::error('Update bus error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Xóa xe
     public function deleteBus($id)
     {
         try {
-            // Xóa tất cả liên quan trước
-            ChuyenXe::where('maxe', $id)->delete();
-            TuyenXe::where('maxe', $id)->update(['maxe' => null]);
+            DB::transaction(function () use ($id) {
+                $bus = Xe::findOrFail($id);
+                $seatIds = Ghe::where('maxe', $id)->pluck('maghe');
 
-            // Cuối cùng xóa xe
-            Xe::destroy($id);
+                if ($seatIds->isNotEmpty()) {
+                    Ve::whereIn('maghe', $seatIds)->delete();
+                }
 
-            return redirect()->route('admin.buses')->with('success', 'Xóa xe thành công!');
+                ChuyenXe::where('maxe', $id)->delete();
+                TuyenXe::where('maxe', $id)->update(['maxe' => null]);
+                Ghe::where('maxe', $id)->delete();
+                $bus->delete();
+            });
+
+            return redirect()->route('admin.buses')->with('success', 'Xoa xe thanh cong!');
         } catch (\Exception $e) {
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()]);
+            Log::error('Delete bus error: ' . $e->getMessage());
+            return redirect()->route('admin.buses')->withErrors(['Loi xoa xe: ' . $e->getMessage()]);
         }
     }
 
-    // Lấy thông tin xe theo ID (cho modal sửa)
     public function getBus($id)
     {
         try {
             $bus = Xe::findOrFail($id);
             return response()->json($bus);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Không tìm thấy xe'], 404);
+            return response()->json(['error' => 'Khong tim thay xe'], 404);
         }
     }
 
-
-    // ========== QUẢN LÝ TUYẾN XE ==========
-
-
-    // Quản lý tuyến - Hiển thị danh sách
     private function busPlateExists(string $bienSoXe, ?int $exceptBusId = null): bool
     {
         $query = Xe::whereRaw('LOWER(TRIM(biensoxe)) = ?', [mb_strtolower(trim($bienSoXe))]);
@@ -364,6 +347,7 @@ class AdminController extends Controller
                 ->orderBy('matuyen', 'asc')
                 ->get();
             $buses = Xe::where('trangthai', 'Đang hoạt động')->get();
+
             return view('admin.routes', compact('routes', 'buses'));
         } catch (\Exception $e) {
             Log::error('Admin routes error: ' . $e->getMessage());
@@ -373,7 +357,6 @@ class AdminController extends Controller
         }
     }
 
-    // Thêm tuyến mới
     public function storeRoute(Request $request)
     {
         $request->validate([
@@ -386,25 +369,23 @@ class AdminController extends Controller
             'trangthai' => 'required|in:Đang hoạt động,Ngừng hoạt động',
             'maxe' => 'nullable|exists:xe,maxe',
         ], [
-            'diemdi.required' => 'Vui lòng nhập điểm đi',
-            'diemden.required' => 'Vui lòng nhập điểm đến',
-            'khoangcach.required' => 'Vui lòng nhập khoảng cách',
-            'thoigian.required' => 'Vui lòng nhập thời gian',
-            'giatien.required' => 'Vui lòng nhập giá tiền',
-            'maxe.exists' => 'Xe không tồn tại',
+            'diemdi.required' => 'Vui long nhap diem di',
+            'diemden.required' => 'Vui long nhap diem den',
+            'khoangcach.required' => 'Vui long nhap khoang cach',
+            'thoigian.required' => 'Vui long nhap thoi gian',
+            'giatien.required' => 'Vui long nhap gia tien',
+            'maxe.exists' => 'Xe khong ton tai',
         ]);
 
         try {
             TuyenXe::create($this->routeData($request));
-
-            return redirect()->route('admin.routes')->with('success', 'Thêm tuyến thành công!');
+            return redirect()->route('admin.routes')->with('success', 'Them tuyen thanh cong!');
         } catch (\Exception $e) {
             Log::error('Store route error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Cập nhật tuyến
     public function updateRoute(Request $request, $id)
     {
         $request->validate([
@@ -422,46 +403,38 @@ class AdminController extends Controller
             $route = TuyenXe::findOrFail($id);
             $route->update($this->routeData($request));
 
-            return redirect()->route('admin.routes')->with('success', 'Cập nhật tuyến thành công!');
+            return redirect()->route('admin.routes')->with('success', 'Cap nhat tuyen thanh cong!');
         } catch (\Exception $e) {
             Log::error('Update route error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Xóa tuyến
     public function deleteRoute($id)
     {
         try {
-            $route = TuyenXe::findOrFail($id);
+            DB::transaction(function () use ($id) {
+                $route = TuyenXe::findOrFail($id);
+                ChuyenXe::where('matuyen', $route->matuyen)->delete();
+                $route->delete();
+            });
 
-            // Kiểm tra nếu tuyến đang có chuyến xe thì không cho xóa
-            if ($route->chuyenXes && $route->chuyenXes->count() > 0) {
-                return back()->withErrors(['Không thể xóa tuyến này vì đang có chuyến xe liên quan!']);
-            }
-
-            $route->delete();
-            return redirect()->route('admin.routes')->with('success', 'Xóa tuyến thành công!');
+            return redirect()->route('admin.routes')->with('success', 'Xoa tuyen thanh cong!');
         } catch (\Exception $e) {
             Log::error('Delete route error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()]);
+            return redirect()->route('admin.routes')->withErrors(['Loi xoa tuyen: ' . $e->getMessage()]);
         }
     }
 
-    // Lấy thông tin tuyến theo ID
     public function getRoute($id)
     {
         try {
             $route = TuyenXe::with('xe')->findOrFail($id);
             return response()->json($route);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Không tìm thấy tuyến'], 404);
+            return response()->json(['error' => 'Khong tim thay tuyen'], 404);
         }
     }
-
-
-    // ========== QUẢN LÝ CHUYẾN XE ==========
-
 
     private function routeData(Request $request): array
     {
@@ -485,6 +458,7 @@ class AdminController extends Controller
                 ->get();
             $routes = TuyenXe::with('xe')->where('trangthai', 'Đang hoạt động')->get();
             $buses = Xe::with('ghes')->where('trangthai', 'Đang hoạt động')->get();
+
             return view('admin.trips', compact('trips', 'routes', 'buses'));
         } catch (\Exception $e) {
             Log::error('Admin trips error: ' . $e->getMessage());
@@ -495,7 +469,6 @@ class AdminController extends Controller
         }
     }
 
-    // Thêm chuyến mới
     public function storeTrip(Request $request)
     {
         $request->validate([
@@ -508,14 +481,13 @@ class AdminController extends Controller
 
         try {
             ChuyenXe::create($this->tripData($request));
-            return redirect()->route('admin.trips')->with('success', 'Thêm chuyến thành công!');
+            return redirect()->route('admin.trips')->with('success', 'Them chuyen thanh cong!');
         } catch (\Exception $e) {
             Log::error('Store trip error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Cập nhật chuyến
     public function updateTrip(Request $request, $id)
     {
         $request->validate([
@@ -529,27 +501,28 @@ class AdminController extends Controller
         try {
             $trip = ChuyenXe::findOrFail($id);
             $trip->update($this->tripData($request));
-            return redirect()->route('admin.trips')->with('success', 'Cập nhật chuyến thành công!');
+            return redirect()->route('admin.trips')->with('success', 'Cap nhat chuyen thanh cong!');
         } catch (\Exception $e) {
             Log::error('Update trip error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['Loi: ' . $e->getMessage()])->withInput();
         }
     }
 
-    // Xóa chuyến
     public function deleteTrip($id)
     {
         try {
-            $trip = ChuyenXe::findOrFail($id);
-            $trip->delete();
-            return redirect()->route('admin.trips')->with('success', 'Xóa chuyến thành công!');
+            DB::transaction(function () use ($id) {
+                $trip = ChuyenXe::findOrFail($id);
+                $trip->delete();
+            });
+
+            return redirect()->route('admin.trips')->with('success', 'Xoa chuyen thanh cong!');
         } catch (\Exception $e) {
             Log::error('Delete trip error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()]);
+            return redirect()->route('admin.trips')->withErrors(['Loi xoa chuyen: ' . $e->getMessage()]);
         }
     }
 
-    // Lấy thông tin chuyến theo ID
     public function getTrip($id)
     {
         try {
@@ -557,22 +530,17 @@ class AdminController extends Controller
             $trip->ghe_trong = $this->availableSeatsForBus((int) $trip->maxe);
             return response()->json($trip);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Không tìm thấy chuyến'], 404);
+            return response()->json(['error' => 'Khong tim thay chuyen'], 404);
         }
     }
 
-
-    // ========== QUẢN LÝ VÉ ==========
-
-
-    // Hiển thị danh sách vé
     private function tripData(Request $request): array
     {
         $route = TuyenXe::findOrFail($request->matuyen);
         $busId = $route->maxe ?: $request->maxe;
 
         if (!$busId) {
-            throw new \RuntimeException('Tuyến xe chưa được phân công xe.');
+            throw new \RuntimeException('Tuyen xe chua duoc phan cong xe.');
         }
 
         return [
@@ -601,7 +569,7 @@ class AdminController extends Controller
         $totalSeats = (int) Xe::where('maxe', $busId)->value('soghe');
         $availableSeats = Ghe::where('maxe', $busId)
             ->where(function ($query) {
-                $query->where('trangthai', '!=', 'da_dat')
+                $query->whereNotIn('trangthai', ['da_dat', 'giu_cho'])
                     ->orWhereNull('trangthai');
             })
             ->count();
@@ -616,7 +584,6 @@ class AdminController extends Controller
                 ->orderBy('mave', 'asc')
                 ->get();
 
-            // Thống kê
             $totalTickets = $tickets->count();
             $totalRevenue = $tickets->sum('tongsotien');
             $daThanhToan = $tickets->where('trangthai', 'da_di')->count();
@@ -634,7 +601,6 @@ class AdminController extends Controller
         }
     }
 
-    // Cập nhật trạng thái vé
     public function updateTicketStatus(Request $request, $id)
     {
         $request->validate([
@@ -647,62 +613,60 @@ class AdminController extends Controller
                 'trangthai' => $request->trangthai,
             ]);
 
-            return redirect()->route('admin.tickets')->with('success', 'Cập nhật trạng thái vé thành công!');
+            return redirect()->route('admin.tickets')->with('success', 'Cap nhat trang thai ve thanh cong!');
         } catch (\Exception $e) {
             Log::error('Update ticket status error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()]);
+            return back()->withErrors(['Loi: ' . $e->getMessage()]);
         }
     }
 
-    // Xóa vé
     public function deleteTicket($id)
     {
         try {
-            $ticket = Ve::findOrFail($id);
-            $ticket->delete();
-            return redirect()->route('admin.tickets')->with('success', 'Xóa vé thành công!');
+            DB::transaction(function () use ($id) {
+                $ticket = Ve::findOrFail($id);
+
+                if ($ticket->maghe) {
+                    Ghe::where('maghe', $ticket->maghe)->update(['trangthai' => null]);
+                }
+
+                $ticket->delete();
+            });
+
+            return redirect()->route('admin.tickets')->with('success', 'Xoa ve thanh cong!');
         } catch (\Exception $e) {
             Log::error('Delete ticket error: ' . $e->getMessage());
-            return back()->withErrors(['Lỗi: ' . $e->getMessage()]);
+            return redirect()->route('admin.tickets')->withErrors(['Loi xoa ve: ' . $e->getMessage()]);
         }
     }
 
-    // Lấy thông tin vé theo ID
     public function getTicket($id)
     {
         try {
             $ticket = Ve::with(['ghe', 'taiKhoan'])->findOrFail($id);
             return response()->json($ticket);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Không tìm thấy vé'], 404);
+            return response()->json(['error' => 'Khong tim thay ve'], 404);
         }
     }
 
-    // Xuất báo cáo vé (Excel)
     public function exportTickets()
     {
-        // TODO: Implement export to Excel
-        return redirect()->back()->with('success', 'Chức năng đang phát triển!');
+        return redirect()->back()->with('success', 'Chuc nang dang phat trien!');
     }
 
-
-
-    // Quản lý thanh toán
     public function payments()
     {
         return view('admin.payments');
     }
 
-    // Khuyến mãi
     public function promotions()
     {
         return view('admin.promotions');
     }
 
-    // Báo cáo thống kê
     public function reports()
     {
-        // Lấy dữ liệu thống kê
         $totalRevenue = Ve::sum('tongsotien');
         $totalTickets = Ve::count();
         $totalUsers = TaiKhoan::count();
@@ -711,7 +675,6 @@ class AdminController extends Controller
         return view('admin.reports', compact('totalRevenue', 'totalTickets', 'totalUsers', 'recentTickets'));
     }
 
-    // Cài đặt hệ thống
     public function settings()
     {
         return view('admin.settings');

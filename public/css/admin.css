@@ -516,6 +516,105 @@ body {
     margin-bottom: 1rem;
 }
 
+.route-modal {
+    padding: 1rem;
+}
+
+.route-modal-panel {
+    max-width: 48rem;
+    max-height: calc(100vh - 2rem);
+    overflow: hidden;
+    padding: 0;
+    border-radius: 0.9rem;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+}
+
+.route-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #075e59, #16978c);
+    color: #fff;
+}
+
+.route-modal-header .modal-header {
+    margin: 0.1rem 0 0;
+    color: #fff;
+    font-size: 1.35rem;
+}
+
+.route-modal-kicker {
+    margin: 0;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.modal-close-btn {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.65rem;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.48);
+}
+
+.route-modal-panel form {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 7.5rem);
+}
+
+.route-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem 1rem;
+    overflow-y: auto;
+    padding: 1.15rem 1.25rem;
+}
+
+.route-form-grid .form-group {
+    margin-bottom: 0;
+}
+
+.route-form-wide {
+    grid-column: 1 / -1;
+}
+
+.route-form-half {
+    grid-column: span 1;
+}
+
+.route-modal-actions {
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid var(--color-border);
+    background: #f9fafb;
+}
+
+.route-modal-actions .btn-outline,
+.route-modal-actions .btn-primary {
+    min-width: 7.25rem;
+    justify-content: center;
+}
+
 .modal-body {
     margin-bottom: 1rem;
 }
@@ -534,14 +633,14 @@ body {
 .form-label {
     display: block;
     color: #374151;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     font-weight: 600;
 }
 
 .form-input,
 .form-select {
     width: 100%;
-    padding: 0.6rem 1rem;
+    padding: 0.55rem 0.85rem;
     border: 1px solid var(--color-border);
     border-radius: 0.75rem;
     outline: none;
@@ -930,6 +1029,35 @@ body {
     .pagination {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .route-modal {
+        align-items: flex-end;
+        padding: 0.75rem;
+    }
+
+    .route-modal-panel {
+        max-height: calc(100vh - 1.5rem);
+    }
+
+    .route-modal-header,
+    .route-form-grid,
+    .route-modal-actions {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .route-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .route-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .route-modal-actions .btn-outline,
+    .route-modal-actions .btn-primary {
+        width: 100%;
     }
 }
 

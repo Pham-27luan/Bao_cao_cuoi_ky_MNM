@@ -6,7 +6,7 @@
     <title>Quản lý tuyến - Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=4">
 </head>
 <body class="font-['Inter']">
     <div class="admin-container">
@@ -117,19 +117,28 @@
         </main>
     </div>
 
-    <div id="routeModal" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-header" id="routeModalTitle">Thêm tuyến mới</h2>
+    <div id="routeModal" class="modal route-modal">
+        <div class="modal-content route-modal-panel">
+            <div class="route-modal-header">
+                <div>
+                    <p class="route-modal-kicker">Quản lý tuyến xe</p>
+                    <h2 class="modal-header" id="routeModalTitle">Thêm tuyến mới</h2>
+                </div>
+                <button type="button" onclick="closeRouteModal()" class="modal-close-btn" aria-label="Đóng">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <form id="routeForm" method="POST" action="{{ route('admin.routes.store') }}">
                 @csrf
                 <input type="hidden" id="routeId" name="routeId">
 
-                <div class="form-group">
+                <div class="route-form-grid">
+                <div class="form-group route-form-wide">
                     <label class="form-label">Tên tuyến <span class="required">*</span></label>
                     <input type="text" id="tentuyen" name="tentuyen" class="form-input" placeholder="VD: Nam Định - Hà Nội" value="{{ old('tentuyen') }}" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group route-form-wide">
                     <label class="form-label">Chọn xe</label>
                     <select id="maxe" name="maxe" class="form-select">
                         <option value="">-- Chọn xe --</option>
@@ -151,32 +160,35 @@
                     <input type="text" id="diemden" name="diemden" class="form-input" placeholder="VD: Nam Định" value="{{ old('diemden') }}" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group route-form-half">
                     <label class="form-label">Khoảng cách (km) <span class="required">*</span></label>
                     <input type="number" id="khoangcach" name="khoangcach" class="form-input" placeholder="VD: 110" value="{{ old('khoangcach') }}" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group route-form-half">
                     <label class="form-label">Thời gian <span class="required">*</span></label>
                     <input type="text" id="thoigian" name="thoigian" class="form-input" placeholder="VD: 2.5h" value="{{ old('thoigian') }}" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group route-form-half">
                     <label class="form-label">Giá vé (VNĐ) <span class="required">*</span></label>
                     <input type="number" id="giatien" name="giatien" class="form-input" placeholder="VD: 150000" value="{{ old('giatien') }}" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group route-form-half">
                     <label class="form-label">Trạng thái <span class="required">*</span></label>
                     <select id="trangthai" name="trangthai" class="form-select" required>
                         <option value="Đang hoạt động" {{ old('trangthai', 'Đang hoạt động') === 'Đang hoạt động' ? 'selected' : '' }}>Đang hoạt động</option>
                         <option value="Ngừng hoạt động" {{ old('trangthai') === 'Ngừng hoạt động' ? 'selected' : '' }}>Ngừng hoạt động</option>
                     </select>
                 </div>
+                </div>
 
-                <div class="modal-footer">
-                    <button type="button" onclick="closeRouteModal()" class="btn-outline flex-1">Hủy</button>
-                    <button type="submit" class="btn-primary flex-1">Lưu</button>
+                <div class="modal-footer route-modal-actions">
+                    <button type="button" onclick="closeRouteModal()" class="btn-outline">Hủy</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Lưu tuyến
+                    </button>
                 </div>
             </form>
         </div>
@@ -202,6 +214,6 @@
         window.routeFormHasErrors = @json($errors->any());
     </script>
     
-    <script src="{{ asset('js/admin.js') }}?v=2"></script>
+    <script src="{{ asset('js/admin.js') }}?v=4"></script>
 </body>
 </html>

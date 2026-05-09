@@ -49,7 +49,7 @@
                             <h4><i class="fas fa-couch"></i> Sơ đồ ghế (chọn ghế trống)</h4>
                             <div class="seat-grid" id="seatContainer">
                                 @foreach($ghes as $ghe)
-                                    <div class="seat {{ $ghe->trangthai == 'da_dat' ? 'booked' : 'available' }}" data-seat-id="{{ $ghe->maghe }}">
+                                    <div class="seat {{ in_array($ghe->trangthai, ['da_dat', 'giu_cho']) ? 'booked' : 'available' }}" data-seat-id="{{ $ghe->maghe }}">
                                         {{ $ghe->tenghe }}
                                     </div>
                                 @endforeach

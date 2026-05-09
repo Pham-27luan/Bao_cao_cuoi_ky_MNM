@@ -43,33 +43,33 @@ Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(functi
     Route::post('/users/store', [AdminController::class, 'storeUser'])->name('users.store');
     Route::post('/users/update/{id}', [AdminController::class, 'updateUser'])->name('users.update');
     Route::get('/users/get/{id}', [AdminController::class, 'getUser'])->name('users.get');
-    Route::get('/users/delete/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
+    Route::match(['get', 'delete'], '/users/delete/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
 
     // Bus management
     Route::get('/buses', [AdminController::class, 'buses'])->name('buses');
     Route::post('/buses/store', [AdminController::class, 'storeBus'])->name('buses.store');
     Route::post('/buses/update/{id}', [AdminController::class, 'updateBus'])->name('buses.update');
     Route::get('/buses/get/{id}', [AdminController::class, 'getBus'])->name('buses.get');
-    Route::get('/buses/delete/{id}', [AdminController::class, 'deleteBus'])->name('buses.delete');
+    Route::match(['get', 'delete'], '/buses/delete/{id}', [AdminController::class, 'deleteBus'])->name('buses.delete');
 
     // Route management (tuyến xe)
     Route::get('/routes', [AdminController::class, 'routes'])->name('routes');
     Route::post('/routes/store', [AdminController::class, 'storeRoute'])->name('routes.store');
     Route::post('/routes/update/{id}', [AdminController::class, 'updateRoute'])->name('routes.update');
     Route::get('/routes/get/{id}', [AdminController::class, 'getRoute'])->name('routes.get');
-    Route::get('/routes/delete/{id}', [AdminController::class, 'deleteRoute'])->name('routes.delete');
+    Route::match(['get', 'delete'], '/routes/delete/{id}', [AdminController::class, 'deleteRoute'])->name('routes.delete');
 
     // Trip management (chuyến xe)
     Route::get('/trips', [AdminController::class, 'trips'])->name('trips');
     Route::post('/trips/store', [AdminController::class, 'storeTrip'])->name('trips.store');
     Route::post('/trips/update/{id}', [AdminController::class, 'updateTrip'])->name('trips.update');
     Route::get('/trips/get/{id}', [AdminController::class, 'getTrip'])->name('trips.get');
-    Route::get('/trips/delete/{id}', [AdminController::class, 'deleteTrip'])->name('trips.delete');
+    Route::match(['get', 'delete'], '/trips/delete/{id}', [AdminController::class, 'deleteTrip'])->name('trips.delete');
 
     // Ticket management (vé)
     Route::get('/tickets', [AdminController::class, 'tickets'])->name('tickets');
     Route::post('/tickets/update-status/{id}', [AdminController::class, 'updateTicketStatus'])->name('tickets.update-status');
-    Route::get('/tickets/delete/{id}', [AdminController::class, 'deleteTicket'])->name('tickets.delete');
+    Route::match(['get', 'delete'], '/tickets/delete/{id}', [AdminController::class, 'deleteTicket'])->name('tickets.delete');
     Route::get('/tickets/get/{id}', [AdminController::class, 'getTicket'])->name('tickets.get');
     Route::get('/tickets/export', [AdminController::class, 'exportTickets'])->name('tickets.export');
 

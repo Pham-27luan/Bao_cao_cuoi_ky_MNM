@@ -89,7 +89,7 @@
                                         @php
                                             $tongGhe = $displayBus ? $displayBus->soghe : 0;
                                             $gheTrong = $displayBus
-                                                ? $displayBus->ghes->filter(fn($ghe) => $ghe->trangthai !== 'da_dat')->count()
+                                                ? $displayBus->ghes->filter(fn($ghe) => !in_array($ghe->trangthai, ['da_dat', 'giu_cho']))->count()
                                                 : 0;
                                             $gheTrong = min((int) $gheTrong, (int) $tongGhe);
                                             $percent = $tongGhe > 0 ? ($gheTrong / $tongGhe) * 100 : 0;
@@ -162,7 +162,7 @@
                             <option
                                 value="{{ $bus->maxe }}"
                                 data-soghe="{{ $bus->soghe }}"
-                                data-ghe-trong="{{ min($bus->ghes->filter(fn($ghe) => $ghe->trangthai !== 'da_dat')->count(), $bus->soghe) }}"
+                                data-ghe-trong="{{ min($bus->ghes->filter(fn($ghe) => !in_array($ghe->trangthai, ['da_dat', 'giu_cho']))->count(), $bus->soghe) }}"
                                 {{ old('maxe') == $bus->maxe ? 'selected' : '' }}
                             >
                                 {{ $bus->biensoxe }} - {{ $bus->loaixe }} ({{ $bus->soghe }} ghế)
