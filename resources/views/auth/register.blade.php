@@ -23,18 +23,31 @@
                 <div class="register-body">
                     @if ($errors->any())
                         <div class="error-message">
-                            <strong>⚠️ Lỗi!</strong> {{ $errors->first() }}
+                            <strong>Lỗi!</strong> {{ $errors->first() }}
                         </div>
                     @endif
 
                     @if (session('success'))
                         <div class="success-message">
-                            <strong>✓ Thành công!</strong> {{ session('success') }}
+                            <strong>Thành công!</strong> {{ session('success') }}
                         </div>
                     @endif
 
                     <form method="POST" action="{{ route('register.post') }}" id="registerForm">
                         @csrf
+
+                        <div class="input-group">
+                            <label for="hoten">Họ và tên</label>
+                            <input
+                                type="text"
+                                id="hoten"
+                                name="hoten"
+                                placeholder="Nhập họ và tên"
+                                value="{{ old('hoten') }}"
+                                autocomplete="name"
+                                required
+                            >
+                        </div>
 
                         <div class="input-group">
                             <label for="phone">Số điện thoại</label>
@@ -107,4 +120,3 @@
     <script src="{{ asset('js/register.js') }}"></script>
 </body>
 </html>
-

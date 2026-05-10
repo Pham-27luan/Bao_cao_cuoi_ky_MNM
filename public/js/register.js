@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("registerForm");
     const submitBtn = document.getElementById("submitBtn");
 
+    const nameInput = document.getElementById("hoten");
     const phoneInput = document.getElementById("phone");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
+    clearErrorOnInput(nameInput);
     clearErrorOnInput(phoneInput);
     clearErrorOnInput(emailInput);
     clearErrorOnInput(passwordInput);
@@ -46,10 +48,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (form && submitBtn) {
         form.addEventListener("submit", function (e) {
+            const fullName = nameInput ? nameInput.value.trim() : "";
             const phone = phoneInput ? phoneInput.value.trim() : "";
             const email = emailInput ? emailInput.value.trim() : "";
             const password = passwordInput ? passwordInput.value : "";
             const confirmPassword = confirmInput ? confirmInput.value : "";
+
+            if (!fullName) {
+                e.preventDefault();
+                showError("Vui lòng nhập họ và tên");
+                if (nameInput) nameInput.classList.add("error");
+                return false;
+            }
 
             if (!phone) {
                 e.preventDefault();
@@ -109,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const errorDiv = document.createElement("div");
         errorDiv.className = "error-message";
-        errorDiv.innerHTML = "<strong>⚠️ Lỗi!</strong> " + message;
+        errorDiv.innerHTML = "<strong>Lỗi!</strong> " + message;
 
         const registerBody = document.querySelector(".register-body");
         if (registerBody) {
@@ -123,4 +133,3 @@ document.addEventListener("DOMContentLoaded", function () {
         return emailRegex.test(email);
     }
 });
-

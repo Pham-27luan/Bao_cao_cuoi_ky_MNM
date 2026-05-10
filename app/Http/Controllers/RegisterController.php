@@ -17,11 +17,14 @@ class RegisterController extends Controller
     {
         $request->validate(
             [
+                'hoten' => 'required|string|max:255',
                 'phone' => 'required|string|regex:/^0[0-9]{9}$/|unique:taikhoan,phone',
                 'email' => 'nullable|email|max:255|unique:taikhoan,email',
                 'password' => 'required|string|min:6|confirmed',
             ],
             [
+                'hoten.required' => 'Vui lòng nhập họ và tên',
+                'hoten.max' => 'Họ và tên không được vượt quá 255 ký tự',
                 'phone.required' => 'Vui lòng nhập số điện thoại',
                 'phone.regex' => 'Số điện thoại không hợp lệ (bắt đầu bằng 0 và có 10 số)',
                 'phone.unique' => 'Số điện thoại đã được đăng ký',
@@ -35,9 +38,10 @@ class RegisterController extends Controller
 
         try {
             $user = TaiKhoan::create([
-                'phone' => trim($request->phone),
+                'hoten' => trim((string) $request->hoten),
+                'phone' => trim((string) $request->phone),
                 'email' => $request->email,
-                // Lưu mật khẩu dạng chuỗi (plain text) theo yêu cầu
+                // Luu mat khau dang chuoi (plain text) theo yeu cau hien tai cua du an.
                 'password' => (string) $request->password,
                 'role' => 'khach_hang',
             ]);
@@ -53,4 +57,3 @@ class RegisterController extends Controller
         }
     }
 }
-
