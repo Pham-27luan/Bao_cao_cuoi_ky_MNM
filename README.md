@@ -1,63 +1,63 @@
-# Bao Cao MNM
+# Báo Cáo MNM
 
-## Gioi thieu du an
+## Giới thiệu dự án
 
-Day la du an web quan ly va dat ve xe, duoc xay dung theo mo hinh ung dung web voi khu vuc nguoi dung va khu vuc quan tri rieng. He thong ho tro tim kiem tuyen xe, chon chuyen di, chon ghe, thanh toan va xem hoa don. Ngoai ra, trang quan tri cho phep quan ly nguoi dung, xe, tuyen xe, chuyen xe va ve dat.
+Đây là dự án web quản lý và đặt vé xe, được xây dựng theo mô hình ứng dụng web với khu vực người dùng và khu vực quản trị riêng. Hệ thống hỗ trợ tìm kiếm tuyến xe, chọn chuyến đi, chọn ghế, thanh toán và xem hóa đơn. Ngoài ra, trang quản trị cho phép quản lý người dùng, xe, tuyến xe, chuyến xe và vé đặt.
 
-## Thanh vien thuc hien
+## Thành viên thực hiện
 
-| STT | Ho va ten | MSSV | Vai tro |
+| STT | Họ và tên | MSSV | Vai trò |
 |---|---|---|---|
-| 1 | Pham Dinh Luan | 23810310282 | Nhom truong |
-| 2 | Tran Ngoc Thien | 23810310271 | Thanh vien |
+| 1 | Phạm Đình Luân | 23810310282 | Nhóm trưởng |
+| 2 | Trần Ngọc Thiện | 23810310271 | Thành viên |
 
-## Chuc nang du an
+## Chức năng dự án
 
-### Chuc nang phia nguoi dung
+### Chức năng phía người dùng
 
-- Hien thi danh sach tuyen xe va loc theo diem di, diem den, thoi gian di chuyen.
-- Dat ve theo tung tuyen/chuyen xe.
-- Chon ghe theo trang thai trong/da dat.
-- Thanh toan va luu thong tin ve.
-- Xem hoa don sau khi dat ve.
+- Hiển thị danh sách tuyến xe và lọc theo điểm đi, điểm đến, thời gian di chuyển.
+- Đặt vé theo từng tuyến/chuyến xe.
+- Chọn ghế theo trạng thái trống/đã đặt.
+- Thanh toán và lưu thông tin vé.
+- Xem hóa đơn sau khi đặt vé.
 
-### Chuc nang phia quan tri
+### Chức năng phía quản trị
 
-- Dang nhap he thong quan tri theo vai tro.
-- Quan ly nguoi dung: them, sua, xoa, xem danh sach nguoi dung.
-- Quan ly xe: them, sua, xoa, cap nhat thong tin xe.
-- Quan ly tuyen xe: them, sua, xoa, phan cong xe cho tuyen.
-- Quan ly chuyen xe: them, sua, xoa, cap nhat ngay di, gio di va gia ve.
-- Quan ly ve: xem danh sach ve, cap nhat trang thai ve, xoa ve.
-- Theo doi thong ke tong quan nhu so luong nguoi dung, xe, tuyen xe, ve va doanh thu.
-- Xem bao cao trong khu vuc admin.
+- Đăng nhập hệ thống quản trị theo vai trò.
+- Quản lý người dùng: thêm, sửa, xóa, xem danh sách người dùng.
+- Quản lý xe: thêm, sửa, xóa, cập nhật thông tin xe.
+- Quản lý tuyến xe: thêm, sửa, xóa, phân công xe cho tuyến.
+- Quản lý chuyến xe: thêm, sửa, xóa, cập nhật ngày đi, giờ đi và giá vé.
+- Quản lý vé: xem danh sách vé, cập nhật trạng thái vé, xóa vé.
+- Theo dõi thống kê tổng quan như số lượng người dùng, xe, tuyến xe, vé và doanh thu.
+- Xem báo cáo trong khu vực admin.
 
-### Chuc nang he thong
+### Chức năng hệ thống
 
-- Phan quyen theo vai tro `admin`, `tai_xe`, `khach_hang`.
-- Xu ly du lieu bang migration va model Eloquent.
-- Ho tro moi truong phat trien va trien khai qua Docker.
+- Phân quyền theo vai trò `admin`, `tai_xe`, `khach_hang`.
+- Xử lý dữ liệu bằng migration và model Eloquent.
+- Hỗ trợ môi trường phát triển và triển khai qua Docker.
 
-## Bang mo ta chuc nang
+## Bảng mô tả chức năng
 
-| Ten chuc nang | Tac dung cua chuc nang |
+| Tên chức năng | Tác dụng của chức năng |
 |---|---|
-| Dang ky | Cho phep nguoi dung tao tai khoan moi de su dung he thong dat ve. |
-| Dang nhap | Xac thuc nguoi dung truoc khi dat ve, thanh toan va xem hoa don. |
-| Tim kiem tuyen xe | Giup nguoi dung loc va tim tuyen xe phu hop theo diem di, diem den va thoi gian. |
-| Xem danh sach chuyen xe | Hien thi cac chuyen xe thuoc tuyen da chon de nguoi dung lua chon. |
-| Chon ghe | Cho phep nguoi dung chon ghe trong va tranh cac ghe da duoc dat truoc. |
-| Thanh toan | Ghi nhan thong tin thanh toan va tao ve cho nguoi dung. |
-| Xem hoa don | Hien thi thong tin ve da dat de nguoi dung theo doi lai giao dich. |
-| Quan ly nguoi dung | Cho phep admin them, sua, xoa va xem danh sach nguoi dung trong he thong. |
-| Quan ly xe | Cho phep admin quan ly thong tin xe nhu bien so, loai xe, so ghe va trang thai hoat dong. |
-| Quan ly tuyen xe | Cho phep admin them, sua, xoa va cap nhat thong tin cac tuyen xe. |
-| Quan ly chuyen xe | Cho phep admin tao va cap nhat lich trinh, ngay di, gio di va gia ve cua tung chuyen. |
-| Quan ly ve | Cho phep admin theo doi danh sach ve, cap nhat trang thai ve va xoa ve khi can. |
-| Bao cao va thong ke | Tong hop thong tin doanh thu, so luong ve, nguoi dung va cac chi so quan trong khac. |
-| Phan quyen vai tro | Dam bao moi loai tai khoan chi duoc truy cap cac chuc nang phu hop voi vai tro cua minh. |
+| Đăng ký | Cho phép người dùng tạo tài khoản mới để sử dụng hệ thống đặt vé. |
+| Đăng nhập | Xác thực người dùng trước khi đặt vé, thanh toán và xem hóa đơn. |
+| Tìm kiếm tuyến xe | Giúp người dùng lọc và tìm tuyến xe phù hợp theo điểm đi, điểm đến và thời gian. |
+| Xem danh sách chuyến xe | Hiển thị các chuyến xe thuộc tuyến đã chọn để người dùng lựa chọn. |
+| Chọn ghế | Cho phép người dùng chọn ghế trống và tránh các ghế đã được đặt trước. |
+| Thanh toán | Ghi nhận thông tin thanh toán và tạo vé cho người dùng. |
+| Xem hóa đơn | Hiển thị thông tin vé đã đặt để người dùng theo dõi lại giao dịch. |
+| Quản lý người dùng | Cho phép admin thêm, sửa, xóa và xem danh sách người dùng trong hệ thống. |
+| Quản lý xe | Cho phép admin quản lý thông tin xe như biển số, loại xe, số ghế và trạng thái hoạt động. |
+| Quản lý tuyến xe | Cho phép admin thêm, sửa, xóa và cập nhật thông tin các tuyến xe. |
+| Quản lý chuyến xe | Cho phép admin tạo và cập nhật lịch trình, ngày đi, giờ đi và giá vé của từng chuyến. |
+| Quản lý vé | Cho phép admin theo dõi danh sách vé, cập nhật trạng thái vé và xóa vé khi cần. |
+| Báo cáo và thống kê | Tổng hợp thông tin doanh thu, số lượng vé, người dùng và các chỉ số quan trọng khác. |
+| Phân quyền vai trò | Đảm bảo mỗi loại tài khoản chỉ được truy cập các chức năng phù hợp với vai trò của mình. |
 
-## Cong cu va cong nghe su dung
+## Công cụ và công nghệ sử dụng
 
 ### Backend
 
@@ -65,7 +65,7 @@ Day la du an web quan ly va dat ve xe, duoc xay dung theo mo hinh ung dung web v
 - Laravel `^12.0`
 - Laravel Tinker
 - Eloquent ORM
-- Laravel Middleware cho phan quyen vai tro
+- Laravel Middleware cho phân quyền vai trò
 
 ### Frontend
 
@@ -77,18 +77,18 @@ Day la du an web quan ly va dat ve xe, duoc xay dung theo mo hinh ung dung web v
 - JavaScript
 - Axios
 
-### Co so du lieu
+### Cơ sở dữ liệu
 
-- SQLite (mac dinh theo cau hinh Laravel)
-- MySQL 8.0 (co cau hinh qua Docker Compose)
+- SQLite (mặc định theo cấu hình Laravel)
+- MySQL 8.0 (có cấu hình qua Docker Compose)
 
-### Moi truong va van hanh
+### Môi trường và vận hành
 
 - Docker
 - Docker Compose
-- Nginx (co cau hinh trong thu muc `nginx/`)
+- Nginx (có cấu hình trong thư mục `nginx/`)
 
-### Kiem thu va ho tro phat trien
+### Kiểm thử và hỗ trợ phát triển
 
 - PHPUnit
 - Laravel Pint
@@ -98,29 +98,29 @@ Day la du an web quan ly va dat ve xe, duoc xay dung theo mo hinh ung dung web v
 - Mockery
 - Concurrently
 
-## Cau truc thu muc chinh
+## Cấu trúc thư mục chính
 
 ```text
 .
 |-- app/                # Controller, Model, Middleware
-|-- bootstrap/          # Khoi tao ung dung
-|-- config/             # Cau hinh he thong
+|-- bootstrap/          # Khởi tạo ứng dụng
+|-- config/             # Cấu hình hệ thống
 |-- database/           # Migration, seeder, factory
-|-- public/             # Tai nguyen public
+|-- public/             # Tài nguyên public
 |-- resources/          # View Blade, CSS, JS
-|-- routes/             # Dinh nghia route
-|-- tests/              # Kiem thu
-|-- docker-compose.yml  # Cau hinh chay ung dung/db bang Docker
-|-- Dockerfile          # Image cho ung dung Laravel
+|-- routes/             # Định nghĩa route
+|-- tests/              # Kiểm thử
+|-- docker-compose.yml  # Cấu hình chạy ứng dụng/db bằng Docker
+|-- Dockerfile          # Image cho ứng dụng Laravel
 ```
 
-## Lenh phat trien co san
+## Lệnh phát triển có sẵn
 
 ```bash
 composer setup
 ```
 
-Chay moi truong phat trien:
+Chạy môi trường phát triển:
 
 ```bash
 composer dev
@@ -132,13 +132,13 @@ Build frontend:
 npm run build
 ```
 
-Chay test:
+Chạy test:
 
 ```bash
 composer test
 ```
 
-## Ghi chu
+## Ghi chú
 
-- Du an hien dang to chuc theo huong he thong dat ve xe va quan ly van tai.
-- Cac lenh Laravel va NPM duoc thuc hien tai thu muc root cua repo nay.
+- Dự án hiện đang tổ chức theo hướng hệ thống đặt vé xe và quản lý vận tải.
+- Các lệnh Laravel và NPM được thực hiện tại thư mục root của repo này.
