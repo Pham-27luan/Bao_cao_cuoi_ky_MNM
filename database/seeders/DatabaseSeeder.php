@@ -83,7 +83,7 @@ class DatabaseSeeder extends Seeder
             $seats[] = [
                 'maghe' => $i,
                 'tenghe' => 'A' . $i,
-                'trangthai' => $i <= 2 ? 'da_dat' : 'trong',
+                'trangthai' => null,
                 'maxe' => 1,
             ];
         }
@@ -92,7 +92,7 @@ class DatabaseSeeder extends Seeder
             $seats[] = [
                 'maghe' => 100 + $i,
                 'tenghe' => 'B' . $i,
-                'trangthai' => 'trong',
+                'trangthai' => null,
                 'maxe' => 2,
             ];
         }
@@ -123,6 +123,7 @@ class DatabaseSeeder extends Seeder
         DB::table('ve')->upsert([
             [
                 'mave' => 1,
+                'machuyen' => 1,
                 'maghe' => 1,
                 'mataikhoan' => 2,
                 'ngaydat' => now()->subDay()->format('Y-m-d H:i:s'),
@@ -132,6 +133,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'mave' => 2,
+                'machuyen' => 1,
                 'maghe' => 2,
                 'mataikhoan' => 2,
                 'ngaydat' => now()->format('Y-m-d H:i:s'),
@@ -139,6 +141,6 @@ class DatabaseSeeder extends Seeder
                 'tongsotien' => 150000,
                 'trangthai' => 'da_di',
             ],
-        ], ['mave'], ['maghe', 'mataikhoan', 'ngaydat', 'hinhthucthanhtoan', 'tongsotien', 'trangthai']);
+        ], ['mave'], ['machuyen', 'maghe', 'mataikhoan', 'ngaydat', 'hinhthucthanhtoan', 'tongsotien', 'trangthai']);
     }
 }

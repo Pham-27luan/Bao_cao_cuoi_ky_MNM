@@ -172,18 +172,6 @@ body {
     margin-bottom: 2rem;
 }
 
-@media (max-width: 1024px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 640px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 .stat-card {
     background: #fff;
     border-radius: 1rem;
@@ -302,10 +290,6 @@ body {
 }
 
 /* ========== DATA TABLE ========== */
-.table-responsive {
-    overflow-x: auto;
-}
-
 .data-table {
     width: 100%;
     background: #fff;
@@ -979,12 +963,6 @@ body {
     gap: 1.5rem;
 }
 
-@media (min-width: 1024px) {
-    .lg\:grid-cols-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
 /* Border */
 .border {
     border-width: 1px;
@@ -1009,56 +987,6 @@ body {
 /* Hover */
 .hover\:bg-gray-50:hover {
     background-color: #f9fafb;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 1rem;
-    }
-
-    .header-actions {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .filter-group {
-        flex-direction: column;
-    }
-
-    .pagination {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .route-modal {
-        align-items: flex-end;
-        padding: 0.75rem;
-    }
-
-    .route-modal-panel {
-        max-height: calc(100vh - 1.5rem);
-    }
-
-    .route-modal-header,
-    .route-form-grid,
-    .route-modal-actions {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .route-form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .route-modal-actions {
-        flex-direction: column-reverse;
-    }
-
-    .route-modal-actions .btn-outline,
-    .route-modal-actions .btn-primary {
-        width: 100%;
-    }
 }
 
 .action-print {

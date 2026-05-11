@@ -28,7 +28,8 @@ class BillController extends Controller
                 $bills = Ve::query()
                     ->from('ve')
                     ->leftJoin('vitrighe', 've.maghe', '=', 'vitrighe.maghe')
-                    ->leftJoin('tuyenxe', 'vitrighe.maxe', '=', 'tuyenxe.maxe')
+                    ->leftJoin('chuyenxe', 've.machuyen', '=', 'chuyenxe.machuyen')
+                    ->leftJoin('tuyenxe', 'chuyenxe.matuyen', '=', 'tuyenxe.matuyen')
                     ->where('ve.mataikhoan', $account->id)
                     ->select([
                         've.mave',
@@ -37,6 +38,8 @@ class BillController extends Controller
                         've.tongsotien',
                         've.trangthai',
                         'vitrighe.tenghe',
+                        'chuyenxe.ngaydi',
+                        'chuyenxe.giodi',
                         'tuyenxe.diemdi',
                         'tuyenxe.diemden',
                     ])
@@ -44,17 +47,18 @@ class BillController extends Controller
                     ->orderByDesc('ve.mave')
                     ->get()
                     ->map(function ($bill) {
-                        $travelDate = $bill->ngaydat ? Carbon::parse($bill->ngaydat) : null;
+                        $bookingDate = $bill->ngaydat ? Carbon::parse($bill->ngaydat) : null;
+                        $travelDate = $bill->ngaydi ? Carbon::parse($bill->ngaydi) : null;
                         $isWaiting = $bill->trangthai === 'cho_don';
 
                         $bill->status_key = $isWaiting ? 'waiting' : 'done';
-                        $bill->status_label = $isWaiting ? 'Chờ đón' : 'Đã đi';
-                        $bill->date_label = $travelDate ? $travelDate->format('d/m/Y') : 'Chưa cập nhật';
-                        $bill->time_label = $travelDate ? $travelDate->format('H:i') : '--:--';
+                        $bill->status_label = $isWaiting ? 'Cho don' : 'Da di';
+                        $bill->date_label = $travelDate ? $travelDate->format('d/m/Y') : 'Chua cap nhat';
+                        $bill->time_label = $bill->giodi ?: ($bookingDate ? $bookingDate->format('H:i') : '--:--');
                         $bill->route_label = trim(($bill->diemdi ?? '') . ' - ' . ($bill->diemden ?? ''), ' -');
-                        $bill->route_label = $bill->route_label !== '' ? $bill->route_label : 'Chưa cập nhật tuyến xe';
+                        $bill->route_label = $bill->route_label !== '' ? $bill->route_label : 'Chua cap nhat tuyen xe';
                         $bill->money_label = number_format((int) ($bill->tongsotien ?? 0), 0, ',', '.') . ' VND';
-                        $bill->seat_label = $bill->tenghe ?: 'Chưa cập nhật';
+                        $bill->seat_label = $bill->tenghe ?: 'Chua cap nhat';
 
                         return $bill;
                     });

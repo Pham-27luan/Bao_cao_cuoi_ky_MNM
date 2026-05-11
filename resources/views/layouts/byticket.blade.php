@@ -5,7 +5,7 @@
     <title>MY BUS - Đặt vé</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/byticket.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/byticket.css') }}?v=4">
 </head>
 <body>
     @include('pages.header')
@@ -25,21 +25,21 @@
 
             <div class="date-selector">
                 <span><i class="far fa-calendar-alt"></i> Chọn ngày khởi hành:</span>
-                <input type="date" id="travelDate" class="date-input">
+                <input type="date" id="travelDate" class="date-input" value="{{ $selectedTrip->ngaydi }}">
             </div>
 
             <div class="result-section">
                 <div>
                     <div class="trip-detail">
                         <div class="trip-time">
-                            {{ isset($tuyen->giodi) ? \Carbon\Carbon::parse($tuyen->giodi)->format('H:i') : '--:--' }}
+                            {{ $selectedTrip->giodi ?? '--:--' }}
                             <i class="fas fa-arrow-right"></i>
-                            {{ isset($tuyen->gioden) ? \Carbon\Carbon::parse($tuyen->gioden)->format('H:i') : '--:--' }}
+                            --:--
                         </div>
 
                         <div class="route-highlight">
                             <div class="route-info-stack">
-                                <strong>📅 Ngày khởi hành: <span id="displayDateHeader">--/--/----</span></strong>
+                                <strong>📅 Ngày khởi hành: <span id="displayDateHeader">{{ \Carbon\Carbon::parse($selectedTrip->ngaydi)->format('d/m/Y') }}</span></strong>
                                 <span>🕒 Thời gian: {{ $tuyen->thoigiandukien ?? '--' }}</span>
                                 <span>📍 Quãng đường: {{ $tuyen->khoangcach ?? '--' }} km</span>
                             </div>
@@ -49,7 +49,7 @@
                             <h4><i class="fas fa-couch"></i> Sơ đồ ghế (chọn ghế trống)</h4>
                             <div class="seat-grid" id="seatContainer">
                                 @foreach($ghes as $ghe)
-                                    <div class="seat {{ in_array($ghe->trangthai, ['da_dat', 'giu_cho']) ? 'booked' : 'available' }}" data-seat-id="{{ $ghe->maghe }}">
+                                    <div class="seat {{ $ghe->trangthai === 'da_dat' ? 'booked' : 'available' }}" data-seat-id="{{ $ghe->maghe }}">
                                         {{ $ghe->tenghe }}
                                     </div>
                                 @endforeach
@@ -66,10 +66,10 @@
                 <div class="summary-card">
                     <h3><i class="fas fa-receipt"></i> Thông tin đặt vé</h3>
                     <div class="info-row"><span>Tuyến:</span><span><strong>{{ $tuyen->diemdi ?? '--' }} → {{ $tuyen->diemden ?? '--' }}</strong></span></div>
-                    <div class="info-row"><span>Ngày đi:</span><span id="displayDate">--/--/----</span></div>
+                    <div class="info-row"><span>Ngày đi:</span><span id="displayDate">{{ \Carbon\Carbon::parse($selectedTrip->ngaydi)->format('d/m/Y') }}</span></div>
                     <div class="info-row"><span>Ghế đã chọn:</span><span id="selectedSeatsLabel">Chưa có ghế</span></div>
-                    <div class="info-row"><span>Biển số xe:</span><span>{{ $tuyen->bienSoXe ?? '--' }}</span></div>
-                    <div class="info-row"><span>Đơn giá / vé:</span><span><strong>{{ number_format($tuyen->giatien ?? 0, 0, ',', '.') }} VND</strong></span></div>
+                    <div class="info-row"><span>Biển số xe:</span><span>{{ $selectedTrip->xe->biensoxe ?? $tuyen->bienSoXe ?? '--' }}</span></div>
+                    <div class="info-row"><span>Đơn giá / vé:</span><span><strong>{{ number_format((int) ($selectedTrip->giave ?? $tuyen->giatien ?? 0), 0, ',', '.') }} VND</strong></span></div>
                     <div class="total-price" id="totalPriceDisplay">0 VND</div>
                     <button class="btn-book-final" id="bookNowBtn"><i class="fas fa-check-circle"></i> ĐẶT VÉ NGAY</button>
                 </div>
@@ -82,7 +82,10 @@
     <script>
         let selectedSeats = [];
         let selectedSeatIds = [];
-        let pricePerTicket = {{ (int) ($tuyen->giatien ?? 0) }};
+        let pricePerTicket = {{ (int) ($selectedTrip->giave ?? $tuyen->giatien ?? 0) }};
+        const routeId = {{ (int) $tuyen->matuyen }};
+        const selectedTripId = {{ (int) $selectedTrip->machuyen }};
+        const availableDates = @json($chuyenXes->pluck('ngaydi')->values());
 
         function initSeatEvents() {
             document.querySelectorAll('.seat:not(.booked)').forEach(seat => {
@@ -118,21 +121,16 @@
         const dateInput = document.getElementById('travelDate');
         const today = new Date().toISOString().split('T')[0];
         if (dateInput) {
-            dateInput.value = today;
             dateInput.setAttribute('min', today);
-        }
+            dateInput.addEventListener('change', function() {
+                if (!availableDates.includes(this.value)) {
+                    alert('Ngày này chưa có chuyến khởi hành cho tuyến đã chọn.');
+                    this.value = '{{ $selectedTrip->ngaydi }}';
+                    return;
+                }
 
-        function updateDateDisplay() {
-            const dateVal = dateInput?.value || '';
-            if (!dateVal) return;
-            const formatted = new Date(dateVal).toLocaleDateString('vi-VN');
-            document.getElementById('displayDate').innerText = formatted;
-            document.getElementById('displayDateHeader').innerText = formatted;
-        }
-
-        if (dateInput) {
-            dateInput.addEventListener('change', updateDateDisplay);
-            updateDateDisplay();
+                window.location.href = "{{ url('/byticket') }}/" + routeId + "?date=" + encodeURIComponent(this.value);
+            });
         }
 
         document.getElementById('bookNowBtn').addEventListener('click', function() {
@@ -141,16 +139,15 @@
                 return;
             }
 
-            const travelDate = dateInput?.value || '';
             const seats = encodeURIComponent(selectedSeats.join(','));
             const seatIds = encodeURIComponent(selectedSeatIds.join(','));
-            const date = encodeURIComponent(travelDate);
 
-            window.location.href = "{{ url('/payment') }}/{{ $tuyen->matuyen ?? '' }}?seats=" + seats + "&seat_ids=" + seatIds + "&date=" + date;
+            window.location.href = "{{ url('/payment') }}/" + selectedTripId + "?seats=" + seats + "&seat_ids=" + seatIds;
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             initSeatEvents();
+            updateSummary();
         });
     </script>
 </body>

@@ -12,6 +12,7 @@ class Ve extends Model
 
     protected $fillable = [
         'mave',
+        'machuyen',
         'maghe',
         'mataikhoan',
         'ngaydat',
@@ -23,6 +24,11 @@ class Ve extends Model
     public function ghe()
     {
         return $this->belongsTo(Ghe::class, 'maghe', 'maghe');
+    }
+
+    public function chuyenXe()
+    {
+        return $this->belongsTo(ChuyenXe::class, 'machuyen', 'machuyen');
     }
 
     public function taiKhoan()

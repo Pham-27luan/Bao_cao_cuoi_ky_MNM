@@ -2,9 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Thanh toán vé xe</title>
-    <link rel="stylesheet" href="{{ asset('css/payment.css') }}?v=2">
+    <title>Thanh toan ve xe</title>
+    <link rel="stylesheet" href="{{ asset('css/payment.css') }}?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -21,69 +20,72 @@
             @endif
 
             <div class="payment-intro">
-                <span class="payment-kicker">Thanh toán vé xe</span>
-                <h1>Hoàn tất thông tin thanh toán cho chuyến đi của bạn</h1>
+                <span class="payment-kicker">Thanh toan ve xe</span>
+                <h1>Hoan tat thong tin thanh toan cho chuyen di cua ban</h1>
                 <p>
-                    Điền họ tên và số điện thoại để xác nhận người đặt vé. Các thông tin mã vé,
-                    ghế ngồi, điểm đến, ngày đi và giá tiền được hiển thị rõ ràng để bạn dễ kiểm tra
-                    trước khi thanh toán.
+                    Don ve duoc gan truc tiep voi chuyen xe da chon, vi vay ghe trong va ghe da dat se duoc tinh dung theo tung chuyen.
                 </p>
             </div>
 
             <div class="payment-hero">
                 <div class="payment-card">
                     <div class="section-head">
-                        <h2>Thông tin người thanh toán</h2>
-                        <p>Bạn có thể thay đổi họ tên và số điện thoại trước khi xác nhận đơn vé.</p>
+                        <h2>Thong tin nguoi thanh toan</h2>
+                        <p>Ban co the kiem tra lai thong tin truoc khi xac nhan don ve.</p>
                     </div>
 
                     <form>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="fullName">Họ tên</label>
+                                <label for="fullName">Ho ten</label>
                                 <input
                                     type="text"
                                     id="fullName"
                                     name="fullName"
-                                    placeholder="Nhập họ tên của bạn"
+                                    placeholder="Nhap ho ten cua ban"
                                     value="{{ session('userFullName', session('userPhone', '')) }}"
                                 >
                             </div>
 
                             <div class="form-group">
-                                <label for="phoneNumber">Số điện thoại</label>
+                                <label for="phoneNumber">So dien thoai</label>
                                 <input
                                     type="tel"
                                     id="phoneNumber"
                                     name="phoneNumber"
-                                    placeholder="Nhập số điện thoại"
+                                    placeholder="Nhap so dien thoai"
                                     value="{{ session('userPhone', '') }}"
                                 >
                             </div>
 
                             <div class="form-group">
-                                <label for="seatNumber">Ghế ngồi</label>
+                                <label for="seatNumber">Ghe ngoi</label>
                                 <input type="text" id="seatNumber" name="seatNumber" value="" readonly>
                             </div>
 
                             <div class="form-group">
-                                <label for="ticketCode">Mã vé</label>
+                                <label for="ticketCode">Ma ve</label>
                                 <input type="text" id="ticketCode" name="ticketCode" value="" readonly>
                             </div>
 
                             <div class="form-group">
-                                <label for="travelDate">Ngày đi</label>
+                                <label for="travelDate">Ngay di</label>
                                 <input type="text" id="travelDate" name="travelDate" value="" readonly>
                             </div>
 
                             <div class="form-group">
-                                <label for="destination">Điểm đến</label>
+                                <label for="destination">Diem den</label>
                                 <input type="text" id="destination" name="destination" value="" readonly>
                             </div>
 
                             <div class="form-group">
-                                <label for="price">Giá tiền</label>
+                                <label for="price">Gia tien</label>
                                 <input type="text" id="price" name="price" value="" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="busPlate">Bien so xe</label>
+                                <input type="text" id="busPlate" name="busPlate" value="" readonly>
                             </div>
                         </div>
                     </form>
@@ -91,70 +93,69 @@
 
                 <aside class="ticket-summary">
                     <div class="summary-top">
-                        <small>Thông tin đơn vé</small>
-                        <h3 id="tripTitle">Chuyến xe</h3>
+                        <small>Thong tin don ve</small>
+                        <h3 id="tripTitle">Chuyen xe</h3>
                         <div class="summary-route" id="tripMeta">
-                            Khởi hành theo lịch đã chọn | Ngày đi
+                            Khoi hanh theo lich da chon
                         </div>
                     </div>
 
                     <ul class="summary-list">
                         <li>
-                            <span>Mã vé</span>
+                            <span>Ma ve</span>
                             <strong id="summaryTicketCode"></strong>
                         </li>
                         <li>
-                            <span>Ghế ngồi</span>
+                            <span>Ghe ngoi</span>
                             <strong id="summarySeatNumber"></strong>
                         </li>
                         <li>
-                            <span>Ngày đi</span>
+                            <span>Ngay di</span>
                             <strong id="summaryTravelDate"></strong>
                         </li>
                         <li>
-                            <span>Điểm đến</span>
+                            <span>Diem den</span>
                             <strong id="summaryDestination"></strong>
                         </li>
                         <li>
-                            <span>Giá vé</span>
+                            <span>Gia ve</span>
                             <strong id="summaryPrice"></strong>
                         </li>
                     </ul>
 
                     <div class="payment-methods">
-                        <h3>Hình thức thanh toán</h3>
+                        <h3>Hinh thuc thanh toan</h3>
 
                         <div class="method-grid">
                             <div class="method-option">
                                 <input type="radio" id="cash" name="payment_method" value="tien_mat" form="paymentConfirmForm" checked>
                                 <label for="cash">
-                                    <span class="method-title">Tiền mặt</span>
-                                    <span class="method-desc">Thanh toán trực tiếp tại quầy hoặc khi nhận vé.</span>
+                                    <span class="method-title">Tien mat</span>
+                                    <span class="method-desc">Thanh toan truc tiep tai quay hoac khi nhan ve.</span>
                                 </label>
                             </div>
 
                             <div class="method-option">
                                 <input type="radio" id="banking" name="payment_method" value="chuyen_khoan" form="paymentConfirmForm">
                                 <label for="banking">
-                                    <span class="method-title">Chuyển khoản</span>
-                                    <span class="method-desc">Thanh toán qua tài khoản ngân hàng để xác nhận nhanh hơn.</span>
+                                    <span class="method-title">Chuyen khoan</span>
+                                    <span class="method-desc">Thanh toan qua ngan hang de xac nhan nhanh hon.</span>
                                 </label>
                             </div>
                         </div>
                     </div>
 
                     <div class="summary-total">
-                        <span>Tổng thanh toán</span>
+                        <span>Tong thanh toan</span>
                         <strong id="totalAmount"></strong>
                     </div>
 
-                    <form id="paymentConfirmForm" method="POST" action="{{ route('payment.confirm', $payment['matuyen'] ?? $tuyen->matuyen) }}">
+                    <form id="paymentConfirmForm" method="POST" action="{{ route('payment.confirm', $payment['machuyen'] ?? $chuyenXe->machuyen) }}">
                         @csrf
                         <input type="hidden" name="seat_ids" value="{{ implode(',', $payment['seatIds'] ?? []) }}">
-                        <input type="hidden" name="travel_date" value="{{ $payment['rawDate'] ?? '' }}">
-                        <button type="submit" class="pay-button">Xác nhận thanh toán</button>
+                        <button type="submit" class="pay-button">Xac nhan thanh toan</button>
                     </form>
-                    <p class="secure-note">Thông tin thanh toán được hiển thị rõ ràng và dễ kiểm tra.</p>
+                    <p class="secure-note">Thong tin chuyen va ghe duoc doi chieu theo machuyen truoc khi luu ve.</p>
                 </aside>
             </div>
         </div>
@@ -162,24 +163,27 @@
 
     <script>
         const data = @json($payment ?? session('payment'));
-        const fromPlace = data?.from || 'Đà Nẵng';
-        const toPlace = data?.to || 'Cần Thơ';
+        const fromPlace = data?.from || '';
+        const toPlace = data?.to || '';
         const travelDate = data?.date || '';
+        const departureTime = data?.departureTime || '';
         const seatNumber = data?.seats || '';
         const ticketCode = data?.ticketCode || '';
         const totalPrice = data?.total || '';
+        const busPlate = data?.busPlate || '';
 
-        document.title = `Thanh toán vé xe ${fromPlace} - ${toPlace}`;
+        document.title = `Thanh toan ve xe ${fromPlace} - ${toPlace}`;
         document.getElementById('seatNumber').value = seatNumber;
         document.getElementById('ticketCode').value = ticketCode;
-        document.getElementById('travelDate').value = travelDate;
+        document.getElementById('travelDate').value = departureTime ? `${travelDate} ${departureTime}` : travelDate;
         document.getElementById('destination').value = toPlace;
         document.getElementById('price').value = totalPrice;
-        document.getElementById('tripTitle').textContent = `Chuyến xe ${fromPlace} - ${toPlace}`;
-        document.getElementById('tripMeta').textContent = `Tuyến: ${fromPlace} → ${toPlace} | Ngày đi ${travelDate}`;
+        document.getElementById('busPlate').value = busPlate;
+        document.getElementById('tripTitle').textContent = `Chuyen xe ${fromPlace} - ${toPlace}`;
+        document.getElementById('tripMeta').textContent = `Tuyen: ${fromPlace} -> ${toPlace} | Ngay di ${travelDate}${departureTime ? ` - ${departureTime}` : ''}`;
         document.getElementById('summaryTicketCode').textContent = ticketCode;
         document.getElementById('summarySeatNumber').textContent = seatNumber;
-        document.getElementById('summaryTravelDate').textContent = travelDate;
+        document.getElementById('summaryTravelDate').textContent = departureTime ? `${travelDate} ${departureTime}` : travelDate;
         document.getElementById('summaryDestination').textContent = toPlace;
         document.getElementById('summaryPrice').textContent = totalPrice;
         document.getElementById('totalAmount').textContent = totalPrice;

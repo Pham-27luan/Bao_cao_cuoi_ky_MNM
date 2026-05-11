@@ -349,41 +349,4 @@
             transform: translateY(-2px);
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding-top: 112px;
-            }
-
-            .page-wrapper {
-                margin: 1rem auto;
-                padding: 0 1rem;
-            }
-
-            .route-info-banner,
-            .date-selector {
-                padding: 18px;
-            }
-
-            .route-info-banner {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .route-details {
-                justify-content: flex-start;
-            }
-
-            .date-selector {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .date-input {
-                width: 100%;
-            }
-
-            .result-section {
-                grid-template-columns: 1fr;
-                padding: 18px;
-            }
-        }
+        

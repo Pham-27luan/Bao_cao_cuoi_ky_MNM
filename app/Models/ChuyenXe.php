@@ -31,6 +31,11 @@ class ChuyenXe extends Model
         return $this->belongsTo(Xe::class, 'maxe', 'maxe');
     }
 
+    public function ves()
+    {
+        return $this->hasMany(Ve::class, 'machuyen', 'machuyen');
+    }
+
     // Lấy tên tuyến đường
     public function getTenTuyenAttribute()
     {

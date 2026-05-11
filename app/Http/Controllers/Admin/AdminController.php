@@ -106,8 +106,7 @@ class AdminController extends Controller
             return view('admin.users', compact('users'));
         } catch (\Exception $e) {
             Log::error('Admin users error: ' . $e->getMessage());
-            $users = [];
-            return view('admin.users', compact('users'));
+            return view('admin.users', ['users' => []]);
         }
     }
 
@@ -124,13 +123,6 @@ class AdminController extends Controller
             'email' => 'nullable|email|unique:taikhoan,email',
             'password' => 'required|string|min:6',
             'role' => 'required|in:admin,tai_xe,khach_hang',
-        ], [
-            'hoten.required' => 'Vui long nhap ho ten',
-            'phone.required' => 'Vui long nhap so dien thoai',
-            'phone.unique' => 'So dien thoai da ton tai',
-            'email.unique' => 'Email da ton tai',
-            'password.required' => 'Vui long nhap mat khau',
-            'password.min' => 'Mat khau phai co it nhat 6 ky tu',
         ]);
 
         try {
@@ -200,8 +192,7 @@ class AdminController extends Controller
     public function getUser($id)
     {
         try {
-            $user = TaiKhoan::findOrFail($id);
-            return response()->json($user);
+            return response()->json(TaiKhoan::findOrFail($id));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Khong tim thay nguoi dung'], 404);
         }
@@ -214,8 +205,7 @@ class AdminController extends Controller
             return view('admin.buses', compact('buses'));
         } catch (\Exception $e) {
             Log::error('Admin buses error: ' . $e->getMessage());
-            $buses = [];
-            return view('admin.buses', compact('buses'));
+            return view('admin.buses', ['buses' => []]);
         }
     }
 
@@ -227,22 +217,13 @@ class AdminController extends Controller
             'soghe' => 'required|integer|min:1',
             'nhaxe' => 'required|string',
             'trangthai' => 'required|in:Đang hoạt động,Bảo trì,Ngừng hoạt động',
-        ], [
-            'biensoxe.required' => 'Vui long nhap bien so xe',
-            'biensoxe.unique' => 'Bien so xe da ton tai',
-            'loaixe.required' => 'Vui long chon loai xe',
-            'soghe.required' => 'Vui long nhap so ghe',
-            'soghe.min' => 'So ghe phai lon hon 0',
-            'nhaxe.required' => 'Vui long nhap ten nha xe',
         ]);
 
         try {
             $bienSoXe = trim($request->biensoxe);
 
             if ($this->busPlateExists($bienSoXe)) {
-                return back()
-                    ->withErrors(['biensoxe' => 'Bien so xe "' . $bienSoXe . '" da ton tai'])
-                    ->withInput();
+                return back()->withErrors(['biensoxe' => 'Bien so xe "' . $bienSoXe . '" da ton tai'])->withInput();
             }
 
             Xe::create([
@@ -275,9 +256,7 @@ class AdminController extends Controller
             $bienSoXe = trim($request->biensoxe);
 
             if ($this->busPlateExists($bienSoXe, $id)) {
-                return back()
-                    ->withErrors(['biensoxe' => 'Bien so xe "' . $bienSoXe . '" da ton tai'])
-                    ->withInput();
+                return back()->withErrors(['biensoxe' => 'Bien so xe "' . $bienSoXe . '" da ton tai'])->withInput();
             }
 
             $bus->update([
@@ -322,8 +301,7 @@ class AdminController extends Controller
     public function getBus($id)
     {
         try {
-            $bus = Xe::findOrFail($id);
-            return response()->json($bus);
+            return response()->json(Xe::findOrFail($id));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Khong tim thay xe'], 404);
         }
@@ -343,17 +321,13 @@ class AdminController extends Controller
     public function routes()
     {
         try {
-            $routes = TuyenXe::with('xe')
-                ->orderBy('matuyen', 'asc')
-                ->get();
+            $routes = TuyenXe::with('xe')->orderBy('matuyen', 'asc')->get();
             $buses = Xe::where('trangthai', 'Đang hoạt động')->get();
 
             return view('admin.routes', compact('routes', 'buses'));
         } catch (\Exception $e) {
             Log::error('Admin routes error: ' . $e->getMessage());
-            $routes = [];
-            $buses = [];
-            return view('admin.routes', compact('routes', 'buses'));
+            return view('admin.routes', ['routes' => [], 'buses' => []]);
         }
     }
 
@@ -368,13 +342,6 @@ class AdminController extends Controller
             'giatien' => 'required|numeric|min:0',
             'trangthai' => 'required|in:Đang hoạt động,Ngừng hoạt động',
             'maxe' => 'nullable|exists:xe,maxe',
-        ], [
-            'diemdi.required' => 'Vui long nhap diem di',
-            'diemden.required' => 'Vui long nhap diem den',
-            'khoangcach.required' => 'Vui long nhap khoang cach',
-            'thoigian.required' => 'Vui long nhap thoi gian',
-            'giatien.required' => 'Vui long nhap gia tien',
-            'maxe.exists' => 'Xe khong ton tai',
         ]);
 
         try {
@@ -429,8 +396,7 @@ class AdminController extends Controller
     public function getRoute($id)
     {
         try {
-            $route = TuyenXe::with('xe')->findOrFail($id);
-            return response()->json($route);
+            return response()->json(TuyenXe::with('xe')->findOrFail($id));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Khong tim thay tuyen'], 404);
         }
@@ -455,17 +421,18 @@ class AdminController extends Controller
         try {
             $trips = ChuyenXe::with(['tuyenXe.xe.ghes', 'xe.ghes'])
                 ->orderBy('machuyen', 'asc')
-                ->get();
+                ->get()
+                ->map(function ($trip) {
+                    $trip->ghe_trong = $this->availableSeatsForTrip($trip);
+                    return $trip;
+                });
             $routes = TuyenXe::with('xe')->where('trangthai', 'Đang hoạt động')->get();
             $buses = Xe::with('ghes')->where('trangthai', 'Đang hoạt động')->get();
 
             return view('admin.trips', compact('trips', 'routes', 'buses'));
         } catch (\Exception $e) {
             Log::error('Admin trips error: ' . $e->getMessage());
-            $trips = [];
-            $routes = [];
-            $buses = [];
-            return view('admin.trips', compact('trips', 'routes', 'buses'));
+            return view('admin.trips', ['trips' => [], 'routes' => [], 'buses' => []]);
         }
     }
 
@@ -512,8 +479,7 @@ class AdminController extends Controller
     {
         try {
             DB::transaction(function () use ($id) {
-                $trip = ChuyenXe::findOrFail($id);
-                $trip->delete();
+                ChuyenXe::findOrFail($id)->delete();
             });
 
             return redirect()->route('admin.trips')->with('success', 'Xoa chuyen thanh cong!');
@@ -527,7 +493,7 @@ class AdminController extends Controller
     {
         try {
             $trip = ChuyenXe::with(['tuyenXe', 'xe.ghes'])->findOrFail($id);
-            $trip->ghe_trong = $this->availableSeatsForBus((int) $trip->maxe);
+            $trip->ghe_trong = $this->availableSeatsForTrip($trip);
             return response()->json($trip);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Khong tim thay chuyen'], 404);
@@ -566,21 +532,21 @@ class AdminController extends Controller
 
     private function availableSeatsForBus(int $busId): int
     {
-        $totalSeats = (int) Xe::where('maxe', $busId)->value('soghe');
-        $availableSeats = Ghe::where('maxe', $busId)
-            ->where(function ($query) {
-                $query->whereNotIn('trangthai', ['da_dat', 'giu_cho'])
-                    ->orWhereNull('trangthai');
-            })
-            ->count();
+        return (int) Xe::where('maxe', $busId)->value('soghe');
+    }
 
-        return min($availableSeats, $totalSeats);
+    private function availableSeatsForTrip(ChuyenXe $trip): int
+    {
+        $totalSeats = $this->availableSeatsForBus((int) $trip->maxe);
+        $bookedSeats = Ve::where('machuyen', $trip->machuyen)->count();
+
+        return max(0, $totalSeats - $bookedSeats);
     }
 
     public function tickets()
     {
         try {
-            $tickets = Ve::with(['ghe', 'taiKhoan'])
+            $tickets = Ve::with(['ghe', 'taiKhoan', 'chuyenXe.tuyenXe'])
                 ->orderBy('mave', 'asc')
                 ->get();
 
@@ -592,12 +558,13 @@ class AdminController extends Controller
             return view('admin.tickets', compact('tickets', 'totalTickets', 'totalRevenue', 'daThanhToan', 'choThanhToan'));
         } catch (\Exception $e) {
             Log::error('Admin tickets error: ' . $e->getMessage());
-            $tickets = [];
-            $totalTickets = 0;
-            $totalRevenue = 0;
-            $daThanhToan = 0;
-            $choThanhToan = 0;
-            return view('admin.tickets', compact('tickets', 'totalTickets', 'totalRevenue', 'daThanhToan', 'choThanhToan'));
+            return view('admin.tickets', [
+                'tickets' => [],
+                'totalTickets' => 0,
+                'totalRevenue' => 0,
+                'daThanhToan' => 0,
+                'choThanhToan' => 0,
+            ]);
         }
     }
 
@@ -609,9 +576,7 @@ class AdminController extends Controller
 
         try {
             $ticket = Ve::findOrFail($id);
-            $ticket->update([
-                'trangthai' => $request->trangthai,
-            ]);
+            $ticket->update(['trangthai' => $request->trangthai]);
 
             return redirect()->route('admin.tickets')->with('success', 'Cap nhat trang thai ve thanh cong!');
         } catch (\Exception $e) {
@@ -624,13 +589,7 @@ class AdminController extends Controller
     {
         try {
             DB::transaction(function () use ($id) {
-                $ticket = Ve::findOrFail($id);
-
-                if ($ticket->maghe) {
-                    Ghe::where('maghe', $ticket->maghe)->update(['trangthai' => null]);
-                }
-
-                $ticket->delete();
+                Ve::findOrFail($id)->delete();
             });
 
             return redirect()->route('admin.tickets')->with('success', 'Xoa ve thanh cong!');
@@ -643,7 +602,7 @@ class AdminController extends Controller
     public function getTicket($id)
     {
         try {
-            $ticket = Ve::with(['ghe', 'taiKhoan'])->findOrFail($id);
+            $ticket = Ve::with(['ghe', 'taiKhoan', 'chuyenXe.tuyenXe'])->findOrFail($id);
             return response()->json($ticket);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Khong tim thay ve'], 404);

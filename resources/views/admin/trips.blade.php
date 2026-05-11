@@ -2,8 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý chuyến - Admin</title>
+    <title>Quan ly chuyen - Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
@@ -11,64 +10,62 @@
 <body class="font-['Inter']">
     <div class="admin-container">
         @include('admin.partials.sidebar')
-        
+
         <main class="admin-main">
             <div class="main-content">
                 <div class="header-actions">
                     <div class="page-header" style="margin-bottom: 0;">
-                        <h1>Quản lý chuyến</h1>
-                        <p>Danh sách tất cả chuyến xe</p>
+                        <h1>Quan ly chuyen</h1>
+                        <p>Danh sach tat ca chuyen xe</p>
                     </div>
                     <button onclick="openCreateTripModal()" class="btn-primary">
-                        <i class="fas fa-plus"></i> Thêm chuyến mới
+                        <i class="fas fa-plus"></i> Them chuyen moi
                     </button>
                 </div>
-                
+
                 @if(session('success'))
                     <div class="alert-success">
                         <i class="fas fa-check-circle"></i> {{ session('success') }}
                     </div>
                 @endif
-                
+
                 @if($errors->any())
                     <div class="alert-error">
                         <i class="fas fa-exclamation-circle"></i> {{ $errors->first() }}
                     </div>
                 @endif
-                
-                <!-- Bộ lọc -->
+
                 <div class="filter-section">
                     <div class="filter-group">
-                        <input type="date" id="filterDate" class="filter-input" placeholder="Ngày đi">
+                        <input type="date" id="filterDate" class="filter-input" placeholder="Ngay di">
                         <select id="filterRoute" class="filter-select">
-                            <option value="">Tất cả tuyến</option>
+                            <option value="">Tat ca tuyen</option>
                             @foreach($routes as $route)
                                 <option value="{{ $route->matuyen }}">{{ $route->tentuyen }}</option>
                             @endforeach
                         </select>
-                        <input type="text" id="searchInput" placeholder="Tìm kiếm chuyến..." class="filter-search">
+                        <input type="text" id="searchInput" placeholder="Tim kiem chuyen..." class="filter-search">
                         <button class="filter-btn" onclick="filterTrips()">
-                            <i class="fas fa-search"></i> Tìm kiếm
+                            <i class="fas fa-search"></i> Tim kiem
                         </button>
                         <button class="filter-btn" onclick="resetTripFilter()">
-                            <i class="fas fa-redo"></i> Làm mới
+                            <i class="fas fa-redo"></i> Lam moi
                         </button>
                     </div>
                 </div>
-                
-                <!-- Bảng danh sách chuyến -->
-                <div class="table-responsive">
+
+                <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Tuyến đường</th>
-                                <th>Ngày đi</th>
-                                <th>Giờ đi</th>
+                                <th>Tuyen duong</th>
+                                <th>Ngay di</th>
+                                <th>Gio di</th>
                                 <th>Xe</th>
-                                <th>Ghế trống</th>
-                                <th>Giá vé</th>
-                                <th class="text-center">Thao tác</th>
+                                <th>Ghe trong</th>
+                                <th>Gia ve</th>
+                                <th class="text-center">Thao tac</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,27 +75,21 @@
                                     $displayPrice = $trip->tuyenXe && $trip->tuyenXe->giatien
                                         ? ((float) $trip->tuyenXe->giatien < 1000 ? (float) $trip->tuyenXe->giatien * 1000 : (float) $trip->tuyenXe->giatien)
                                         : $trip->giave;
+                                    $tongGhe = $displayBus ? (int) $displayBus->soghe : 0;
+                                    $gheTrong = min((int) $trip->ghe_trong, $tongGhe);
                                 @endphp
                                 <tr class="trip-row" data-route="{{ $trip->matuyen }}" data-ngay="{{ $trip->ngaydi }}" data-search="{{ strtolower($trip->ten_tuyen . ' ' . ($displayBus->biensoxe ?? '')) }}">
                                     <td>{{ $trip->machuyen }}</td>
                                     <td class="font-medium">{{ $trip->ten_tuyen }}</td>
                                     <td>{{ $trip->ngay_di_formatted }}</td>
                                     <td>{{ $trip->giodi }}</td>
-                                    <td>{{ $displayBus->biensoxe ?? 'Chưa cập nhật' }}</td>
+                                    <td>{{ $displayBus->biensoxe ?? 'Chua cap nhat' }}</td>
                                     <td>
-                                        @php
-                                            $tongGhe = $displayBus ? $displayBus->soghe : 0;
-                                            $gheTrong = $displayBus
-                                                ? $displayBus->ghes->filter(fn($ghe) => !in_array($ghe->trangthai, ['da_dat', 'giu_cho']))->count()
-                                                : 0;
-                                            $gheTrong = min((int) $gheTrong, (int) $tongGhe);
-                                            $percent = $tongGhe > 0 ? ($gheTrong / $tongGhe) * 100 : 0;
-                                        @endphp
-                                        <span class="{{ $gheTrong > 10 ? 'text-green-600' : 'text-red-600' }} font-semibold">
+                                        <span class="{{ $gheTrong > 0 ? 'text-green-600' : 'text-red-600' }} font-semibold">
                                             {{ $gheTrong }}/{{ $tongGhe }}
                                         </span>
                                     </td>
-                                    <td class="font-semibold">{{ number_format($displayPrice, 0, ',', '.') }}đ</td>
+                                    <td class="font-semibold">{{ number_format($displayPrice, 0, ',', '.') }}d</td>
                                     <td class="text-center">
                                         <div class="action-group">
                                             <button onclick="editTrip({{ $trip->machuyen }})" class="action-edit">
@@ -113,34 +104,32 @@
                             @empty
                                 <tr>
                                     <td colspan="8" class="text-center p-4 text-gray-500">
-                                        <i class="fas fa-database"></i> Chưa có dữ liệu chuyến xe
+                                        <i class="fas fa-database"></i> Chua co du lieu chuyen xe
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- Phân trang -->
+
                 <div class="pagination">
-                    <p class="pagination-info">Hiển thị <span id="showingCount">{{ count($trips) }}</span> / <span id="totalCount">{{ count($trips) }}</span> chuyến</p>
+                    <p class="pagination-info">Hien thi <span id="showingCount">{{ count($trips) }}</span> / <span id="totalCount">{{ count($trips) }}</span> chuyen</p>
                 </div>
             </div>
         </main>
     </div>
-    
-    <!-- Modal thêm/sửa chuyến -->
+
     <div id="tripModal" class="modal">
         <div class="modal-content">
-            <h2 class="modal-header" id="tripModalTitle">Thêm chuyến mới</h2>
+            <h2 class="modal-header" id="tripModalTitle">Them chuyen moi</h2>
             <form id="tripForm" method="POST" action="{{ route('admin.trips.store') }}">
                 @csrf
                 <input type="hidden" id="tripId" name="tripId">
-                
+
                 <div class="form-group">
-                    <label class="form-label">Chọn tuyến <span class="required">*</span></label>
+                    <label class="form-label">Chon tuyen <span class="required">*</span></label>
                     <select id="matuyen" name="matuyen" class="form-select" required>
-                        <option value="">-- Chọn tuyến --</option>
+                        <option value="">-- Chon tuyen --</option>
                         @foreach($routes as $route)
                             <option
                                 value="{{ $route->matuyen }}"
@@ -148,79 +137,77 @@
                                 data-giave="{{ $route->giatien > 0 && $route->giatien < 1000 ? $route->giatien * 1000 : $route->giatien }}"
                                 {{ old('matuyen') == $route->matuyen ? 'selected' : '' }}
                             >
-                                {{ $route->tentuyen }} - {{ $route->diemdi }} đi {{ $route->diemden }}
+                                {{ $route->tentuyen }} - {{ $route->diemdi }} di {{ $route->diemden }}
                             </option>
                         @endforeach
                     </select>
                 </div>
-                
+
                 <div class="form-group">
-                    <label class="form-label">Xe theo tuyến <span class="required">*</span></label>
+                    <label class="form-label">Xe theo tuyen <span class="required">*</span></label>
                     <select id="maxe" name="maxe" class="form-select" required>
-                        <option value="">-- Tự lấy theo tuyến --</option>
+                        <option value="">-- Tu lay theo tuyen --</option>
                         @foreach($buses as $bus)
                             <option
                                 value="{{ $bus->maxe }}"
                                 data-soghe="{{ $bus->soghe }}"
-                                data-ghe-trong="{{ min($bus->ghes->filter(fn($ghe) => !in_array($ghe->trangthai, ['da_dat', 'giu_cho']))->count(), $bus->soghe) }}"
+                                data-ghe-trong="{{ $bus->soghe }}"
                                 {{ old('maxe') == $bus->maxe ? 'selected' : '' }}
                             >
-                                {{ $bus->biensoxe }} - {{ $bus->loaixe }} ({{ $bus->soghe }} ghế)
+                                {{ $bus->biensoxe }} - {{ $bus->loaixe }} ({{ $bus->soghe }} ghe)
                             </option>
                         @endforeach
                     </select>
                 </div>
-                
+
                 <div class="form-group">
-                    <label class="form-label">Ngày đi <span class="required">*</span></label>
+                    <label class="form-label">Ngay di <span class="required">*</span></label>
                     <input type="date" id="ngaydi" name="ngaydi" class="form-input" value="{{ old('ngaydi') }}" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label class="form-label">Giờ đi <span class="required">*</span></label>
+                    <label class="form-label">Gio di <span class="required">*</span></label>
                     <input type="time" id="giodi" name="giodi" class="form-input" value="{{ old('giodi') }}" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label class="form-label">Giá vé theo tuyến (VNĐ) <span class="required">*</span></label>
-                    <input type="number" id="giave" name="giave" class="form-input" placeholder="Tự lấy theo tuyến" value="{{ old('giave') }}" readonly required>
+                    <label class="form-label">Gia ve theo tuyen (VND) <span class="required">*</span></label>
+                    <input type="number" id="giave" name="giave" class="form-input" placeholder="Tu lay theo tuyen" value="{{ old('giave') }}" readonly required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label class="form-label">Số ghế trống <span class="required">*</span></label>
-                    <input type="number" id="ghe_trong" name="ghe_trong" class="form-input" placeholder="Tự cập nhật theo xe" value="{{ old('ghe_trong') }}" min="0" readonly required>
+                    <label class="form-label">So ghe trong <span class="required">*</span></label>
+                    <input type="number" id="ghe_trong" name="ghe_trong" class="form-input" placeholder="Tu cap nhat theo xe" value="{{ old('ghe_trong') }}" min="0" readonly required>
                 </div>
-                
+
                 <div class="modal-footer">
-                    <button type="button" onclick="closeTripModal()" class="btn-outline flex-1">Hủy</button>
-                    <button type="submit" class="btn-primary flex-1">Lưu</button>
+                    <button type="button" onclick="closeTripModal()" class="btn-outline flex-1">Huy</button>
+                    <button type="submit" class="btn-primary flex-1">Luu</button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- Modal xác nhận xóa -->
+
     <div id="deleteTripModal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header" style="color: #dc2626;">
-                <i class="fas fa-exclamation-triangle"></i> Xác nhận xóa chuyến
+                <i class="fas fa-exclamation-triangle"></i> Xac nhan xoa chuyen
             </div>
             <div class="modal-body">
-                <p>Bạn có chắc chắn muốn xóa chuyến này?</p>
-                <p class="text-sm text-gray-500 mt-2">Hành động này không thể hoàn tác!</p>
+                <p>Ban co chac chan muon xoa chuyen nay?</p>
+                <p class="text-sm text-gray-500 mt-2">Hanh dong nay khong the hoan tac!</p>
             </div>
             <div class="modal-footer">
-                <button onclick="closeDeleteTripModal()" class="btn-outline">Hủy</button>
-                <button id="confirmDeleteTripBtn" class="btn-primary" style="background-color: #dc2626;">Xóa</button>
+                <button onclick="closeDeleteTripModal()" class="btn-outline">Huy</button>
+                <button id="confirmDeleteTripBtn" class="btn-primary" style="background-color: #dc2626;">Xoa</button>
             </div>
         </div>
     </div>
-    
+
     <script>
-        // Khai báo biến để kiểm tra lỗi validation
         window.tripFormHasErrors = @json($errors->any());
     </script>
-    
-    <script src="{{ asset('js/admin.js') }}?v=2"></script>
+
+    <script src="{{ asset('js/admin.js') }}?v=3"></script>
 </body>
 </html>

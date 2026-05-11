@@ -25,8 +25,8 @@ Route::middleware(['role:admin,tai_xe,khach_hang'])->group(function () {
     Route::get('/booking/{matuyen}', [BookingController::class, 'index'])->name('booking');
     Route::get('/byticket/{matuyen?}', [BookingController::class, 'byticket'])->name('byticket');
 
-    Route::get('/payment/{matuyen?}', [PaymentController::class, 'show'])->name('payment');
-    Route::post('/payment/{matuyen}/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
+    Route::get('/payment/{machuyen?}', [PaymentController::class, 'show'])->name('payment');
+    Route::post('/payment/{machuyen}/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
 
     Route::get('/bill', [BillController::class, 'index'])->name('bill');
 });

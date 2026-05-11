@@ -234,18 +234,3 @@ body {
     background: #fff;
 }
 
-@media (max-width: 640px) {
-    .bill-page {
-        padding: 0 1rem;
-        margin: 5rem auto 1rem;
-    }
-
-    .bill-filters {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    .bill-filter-btn {
-        flex: 1 0 auto;
-    }
-}
