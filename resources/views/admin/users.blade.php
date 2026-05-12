@@ -5,7 +5,7 @@
     <title>Quản lý người dùng - Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=5">
 </head>
 <body class="font-['Inter']">
     <div class="admin-container">
@@ -43,7 +43,6 @@
                     </div>
                 @endif
                 
-                <!-- Bộ lọc -->
                 <div class="filter-section">
                     <div class="filter-group">
                         <input type="text" id="searchInput" placeholder="Tìm kiếm tên hoặc số điện thoại..." class="filter-search">
@@ -62,7 +61,6 @@
                     </div>
                 </div>
                 
-                <!-- Bảng danh sách người dùng -->
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
@@ -113,7 +111,6 @@
                     </table>
                 </div>
                 
-                <!-- Phân trang -->
                 <div class="pagination">
                     <p class="pagination-info">Hiển thị <span id="showingCount">{{ count($users) }}</span> / <span id="totalCount">{{ count($users) }}</span> người dùng</p>
                 </div>
@@ -121,49 +118,66 @@
         </main>
     </div>
     
-    <!-- Modal thêm/sửa người dùng -->
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-header" id="userModalTitle">Thêm người dùng mới</h2>
+    <div id="userModal" class="modal route-modal user-modal">
+        <div class="modal-content route-modal-panel user-modal-panel">
+            <div class="route-modal-header">
+                <div>
+                    <p class="route-modal-kicker">Quản lý người dùng</p>
+                    <h2 class="modal-header" id="userModalTitle">Thêm người dùng mới</h2>
+                </div>
+                <button type="button" onclick="closeUserModal()" class="modal-close-btn" aria-label="Đóng">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
             <form id="userForm" method="POST" action="{{ route('admin.users.store') }}">
                 @csrf
                 <input type="hidden" id="userId" name="userId">
-                <div class="form-group">
-                    <label class="form-label">Họ và tên <span class="required">*</span></label>
-                    <input type="text" id="hoten" name="hoten" class="form-input" placeholder="Nhập họ và tên" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Số điện thoại <span class="required">*</span></label>
-                    <input type="text" id="phone" name="phone" class="form-input" placeholder="Nhập số điện thoại" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="Nhập email (không bắt buộc)">
-                </div>
-                <div class="form-group" id="passwordGroup">
-                    <label class="form-label">Mật khẩu <span class="required">*</span></label>
-                    <div class="password-wrapper">
-                        <input type="password" id="password" name="password" class="form-input" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)" required>
-                        <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"></i>
+
+                <div class="route-form-grid user-form-grid">
+                    <div class="form-group route-form-wide">
+                        <label class="form-label">Họ và tên <span class="required">*</span></label>
+                        <input type="text" id="hoten" name="hoten" class="form-input" placeholder="Nhập họ và tên" required>
+                    </div>
+
+                    <div class="form-group route-form-half">
+                        <label class="form-label">Số điện thoại <span class="required">*</span></label>
+                        <input type="text" id="phone" name="phone" class="form-input" placeholder="Nhập số điện thoại" required>
+                    </div>
+
+                    <div class="form-group route-form-half">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="Nhập email (không bắt buộc)">
+                    </div>
+
+                    <div class="form-group route-form-half" id="passwordGroup">
+                        <label class="form-label">Mật khẩu <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" class="form-input" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group route-form-half">
+                        <label class="form-label">Vai trò <span class="required">*</span></label>
+                        <select id="role" name="role" class="form-select" required>
+                            <option value="khach_hang">Khách hàng</option>
+                            <option value="tai_xe">Tài xế</option>
+                            <option value="admin">Quản trị viên</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Vai trò <span class="required">*</span></label>
-                    <select id="role" name="role" class="form-select" required>
-                        <option value="khach_hang">Khách hàng</option>
-                        <option value="tai_xe">Tài xế</option>
-                        <option value="admin">Quản trị viên</option>
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" onclick="closeUserModal()" class="btn-outline flex-1">Hủy</button>
-                    <button type="submit" class="btn-primary flex-1">Lưu</button>
+
+                <div class="modal-footer route-modal-actions">
+                    <button type="button" onclick="closeUserModal()" class="btn-outline">Hủy</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
                 </div>
             </form>
         </div>
     </div>
     
-    <!-- Modal xác nhận xóa -->
     <div id="deleteModal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header" style="color: #dc2626;">
@@ -180,6 +194,6 @@
         </div>
     </div>
     
-    <script src="{{ asset('js/admin.js') }}?v=2"></script>
+    <script src="{{ asset('js/admin.js') }}?v=5"></script>
 </body>
 </html>
