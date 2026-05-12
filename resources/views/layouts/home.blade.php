@@ -5,7 +5,7 @@
     <title>MY BUS - Hành trình tiếp theo của bạn</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}?v=5">
 </head>
 <body>
 
@@ -94,17 +94,27 @@
                 @php
                     $routeStatus = mb_strtolower(trim((string) ($tuyen->trangthai ?? '')), 'UTF-8');
                     $isInactive = in_array($routeStatus, ['ngừng hoạt động', 'ngung hoat dong'], true);
+                    $hasTrips = (int) ($tuyen->chuyen_xes_count ?? 0) > 0;
+                    $cannotBook = $isInactive || !$hasTrips;
                 @endphp
-                <div class="route-card {{ $isInactive ? 'route-card--inactive' : '' }}">
+
+                <div class="route-card {{ $cannotBook ? 'route-card--inactive' : '' }}">
                     <div class="route-header">
                         <div class="route-header__title">
                             <i class="fas fa-route"></i>
                             <span>{{ $tuyen->tentuyen }}</span>
                         </div>
-                        <span class="route-status {{ $isInactive ? 'route-status--inactive' : 'route-status--active' }}">
-                            {{ $isInactive ? 'Ngừng hoạt động' : 'Đang hoạt động' }}
+                        <span class="route-status {{ $cannotBook ? 'route-status--inactive' : 'route-status--active' }}">
+                            @if($isInactive)
+                                Ngừng hoạt động
+                            @elseif(!$hasTrips)
+                                Chưa có chuyến
+                            @else
+                                Đang hoạt động
+                            @endif
                         </span>
                     </div>
+
                     <div class="route-body">
                         <div class="route-points">
                             <span class="from-to">{{ $tuyen->diemdi }}</span>
@@ -134,6 +144,10 @@
                         @if($isInactive)
                             <button class="btn-book btn-book--disabled" type="button" disabled aria-disabled="true">
                                 NGỪNG HOẠT ĐỘNG
+                            </button>
+                        @elseif(!$hasTrips)
+                            <button class="btn-book btn-book--disabled" type="button" disabled aria-disabled="true">
+                                CHƯA CÓ CHUYẾN
                             </button>
                         @else
                             <button class="btn-book" onclick="bookRoute({{ $tuyen->matuyen }})">

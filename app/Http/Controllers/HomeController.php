@@ -14,7 +14,7 @@ class HomeController extends Controller
             ->orderBy('diemden')
             ->get();
 
-        $query = TuyenXe::query();
+        $query = TuyenXe::query()->withCount('chuyenXes');
 
         if ($request->filled('from')) {
             $query->where('diemdi', $request->from);
